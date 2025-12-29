@@ -59,7 +59,7 @@ and activate the environment with
 ```
 conda activate SPIRIT_env
 ```
-
+That's all to install as everything is ran from this directory.
 
 ---
 
@@ -73,13 +73,24 @@ python SPIRIT.py
 ```
 This will produce a popup with a variety of options before running the code. First, place a .txt file of the spectrum you would like to fit in the /Data directory. The file should have three columns, wavlength (micron) flux (Jy) error (Jy). The error values don't matter too much as the code will calculate the appropriate error values first before fitting. 
 
+A fitting method then needs to be selected. By default the "Quick" method is a maximimum probability fit, "Boootstrap" will repeat the maximum probability fit N times to obtain uncertanties on the best fit parameters. "MCMC" using NUMPYRO NUTS sampling to sample the posterior probability to obtain uncertanties.
+After clicking run, the fit will run and populate the Results folder once completed. It may take some time to run depending on your device, a quick fit for a NIRSpec+MIRI spectrum should take at least a few hours to run.
 
-
+Alternatively, the code can be ran in a python file or jupyter notebook by calling the RunModel function from SPIRIT.py. The Run.py file has an example of this which is also shown below. This can be good to run multiple fits in sequence, specifiying the spectra name in the objs array.
 
 
 ```python
-# Example with custom PAH profiles and extinction model
-# Code example here
+import SPIRIT as SPIRIT
+import numpy as np
+
+
+
+# objs = ['VV114_NE']
+
+SPIRIT.RunModel(objs, Dust_Geometry = 'Differential', HI_ratios = 'Case B', Ices_6micron = False, BootStrap = False, N_bootstrap = 100, 
+    useMCMC = False, InitialFit = False, lam_range=[1.5, 28.0], show_progress = True, N_MCMC = 5000, N_BurnIn = 15000, 
+    ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, 
+    NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', Fit_CO = False, spec_res = 'h')
 ```
 
 

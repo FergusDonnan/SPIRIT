@@ -7,13 +7,9 @@
 
 **S**pectral **I**nfra**R**ed **I**nference **T**ool
 
-A powerful Python package for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles.
+A powerful Python tool for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen. svg)](docs/)
 
-[Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Citation](#citation)
 
 </div>
 
@@ -29,7 +25,10 @@ SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra en
 
 - **Differential Extinction Continuum Model**: The main novelty of this tool is the differential extinction model, which models the dust continuum as a 2D weighted average of modified black bodies at a variety of temperatures and extinctions. This is therefore a generalisation of the geometry of the dust where instead of assuming a simple screen or mixed model, the fit will infer a 2D distribution of dust extinction and temperature. This provides not only the flexibility to fit highly obscured environments where other codes fail but also provides physical constraints on teh nature of the obscuring dust.
 - **Flexible PAH Profiles**: Inspired by PAHFIT (Smith+07), the PAH features are modelled as a series of Drude profiles where the shape is allowed to vary to allow accurate PAH flux measurements in a variety of environments. We also use a prior on the PAH band shapes to prevent overfitting in cases of low signal to noise.
+- **PAH and Line Fluxes**: The code will outut PAH fluxes as well as emission line fluxes, where the latter are inferred by integrating continuum subtracted line regions.
 - **Easy to use GUI**: Simple user interface to quickly fit spectra with a variety of options to swap out extinction curves, ice templates etc.
+- **Extinction Estimates**: The code estimates the exitinction through a variety of ways: continuum from the differential extinction model, H2 lines via the rotational diagram, HI lines, stellar continuum and PAHs. For more details see [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract).
+- **Different Fitting Methods enabled by JAX**: The fitting can be performed in three ways, a simple maximum likelihood (quickest), bootstraping and MCMC using NUMPYRO. 
 
 ---
 
@@ -90,6 +89,22 @@ This will produce a popup with a variety of options before running the code. Fir
 ---
 
 ## 📊 Fitting Output
+
+All the output files are located in /Results folder. Within the reuslts directory there are a varierty of files:
+
+### Plots
+A variety of plots are generated including:
+
+*_Plot.pdf: Contains a simple plot of the best fit model and its constituent components.
+*_Psi.pdf: Shows the inferred 2D dust distribution.
+*H2 Rotation Plot.pdf: H2 rotational plot with the inferred H2 extinction value.
+*H2Smoothness.pdf:
+*Effective Ext Plot.pdf: The effective tau_9.8 as a function of wavelength for the differential extinction model. 
+
+
+### Fluxes
+
+### Model Components
 
 
 

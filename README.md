@@ -84,20 +84,23 @@ This will produce a popup with a variety of options before running the code. Fir
 ```
 
 
----
 
-## 🔬 Science Applications
 
-SPIRIT has already been used in numerous works such as 
-
-- <!-- Science application 1 -->
-- <!-- Science application 2 -->
-- <!-- Science application 3 -->
-- <!-- Science application 4 -->
 
 ---
 
-## 📊 Example Results
+## 📊 Fitting Output
+
+
+
+---
+
+##  Options
+
+
+---
+
+## Additional Analysis
 
 <!-- 
 Section for example plots/figures showing: 
@@ -109,7 +112,16 @@ Section for example plots/figures showing:
 
 
 
+---
 
+## 🔬 Science Applications
+
+SPIRIT has already been used in numerous works such as 
+
+- <!-- Science application 1 -->
+- <!-- Science application 2 -->
+- <!-- Science application 3 -->
+- <!-- Science application 4 -->
 ---
 
 ## 📄 Citation
@@ -166,9 +178,5 @@ Any issues please contact me:
 ---
 
 <div align="center">
-
-**SPIRIT** is developed for the astronomical community working with JWST infrared spectroscopy. 
-
-*Made with ❤️ for better PAH science*
 
 </div>

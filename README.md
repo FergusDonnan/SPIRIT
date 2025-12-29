@@ -71,10 +71,14 @@ The easiest way to run SPIRIT is with the GUI which is opened by running SPIRIT.
 ```
 python SPIRIT.py
 ```
-This will produce a popup with a variety of options before running the code. First, place a .txt file of the spectrum you would like to fit in the /Data directory. The file should have three columns, wavlength (micron) flux (Jy) error (Jy). The error values don't matter too much as the code will calculate the appropriate error values first before fitting. 
+This will produce a popup with a variety of options before running the code. First, place a .txt file of the spectrum you would like to fit in the /Data directory. The file should have three columns, wavlength (micron) flux (Jy) error (Jy). The error values don't matter too much as the code will calculate the appropriate error values first before fitting. Select the spectrum you would like to fit from the drop down menu.
 
 A fitting method then needs to be selected. By default the "Quick" method is a maximimum probability fit, "Boootstrap" will repeat the maximum probability fit N times to obtain uncertanties on the best fit parameters. "MCMC" using NUMPYRO NUTS sampling to sample the posterior probability to obtain uncertanties.
 After clicking run, the fit will run and populate the Results folder once completed. It may take some time to run depending on your device, a quick fit for a NIRSpec+MIRI spectrum should take at least a few hours to run.
+
+
+<img width="703" height="730" alt="GUI" src="https://github.com/user-attachments/assets/5704808c-5139-4702-be67-ae6f0539ff17" />
+
 
 Alternatively, the code can be ran in a python file or jupyter notebook by calling the RunModel function from SPIRIT.py. The Run.py file has an example of this which is also shown below. This can be good to run multiple fits in sequence, specifiying the spectra name in the objs array.
 

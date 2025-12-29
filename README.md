@@ -107,15 +107,24 @@ All the output files are located in /Results folder. Within the reuslts director
 A variety of plots are generated including:
 
 *_Plot.pdf: Contains a simple plot of the best fit model and its constituent components.
+
 *_Psi.pdf: Shows the inferred 2D dust distribution.
+
 *H2 Rotation Plot.pdf: H2 rotational plot with the inferred H2 extinction value.
+
 *H2Smoothness.pdf:
+
 *Effective Ext Plot.pdf: The effective tau_9.8 as a function of wavelength for the differential extinction model. 
 
 
 ### Fluxes
+Fluxes of the PAH features and emission lines are stored within the *Output.csv file. This file also containes equivalent widths and the continuum values at the corresponding wavelengths.
 
 ### Model Components
+
+
+
+### Ext. Corrections
 
 
 

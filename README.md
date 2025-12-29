@@ -7,7 +7,7 @@
 
 **S**pectral **I**nfra**R**ed **I**nference **T**ool
 
-A powerful Python package for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum models and flexible PAH profiles.
+A powerful Python package for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -21,15 +21,15 @@ A powerful Python package for modeling JWST NIRSpec and MIRI spectra using diffe
 
 ## 🌟 Overview
 
-SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra with sophisticated physical models.  The package enables precise inference of Polycyclic Aromatic Hydrocarbon (PAH) fluxes and characterization of dust emission and extinction properties.
+SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra enabling one to infer Polycyclic Aromatic Hydrocarbon (PAH) fluxes and characterise the nature of the dust emission/extinction. The tool was first presented in [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract). 
+
+
 
 ### Key Features
 
-- **Differential Extinction Continuum Model**: <!-- Description of the continuum modeling approach -->
-- **Flexible PAH Profiles**:  <!-- Description of PAH profile flexibility and parameterization -->
-- **JWST Instrument Support**: Native support for NIRSpec and MIRI observations
-- **Bayesian Inference**: <!-- Description of inference methodology -->
-- **Customizable Components**: <!-- Description of model customization options -->
+- **Differential Extinction Continuum Model**: The main novelty of this tool is the differential extinction model, which models the dust continuum as a 2D weighted average of modified black bodies at a variety of temperatures and extinctions. This is therefore a generalisation of the geometry of the dust where instead of assuming a simple screen or mixed model, the fit will infer a 2D distribution of dust extinction and temperature. This provides not only the flexibility to fit highly obscured environments where other codes fail but also provides physical constraints on teh nature of the obscuring dust.
+- **Flexible PAH Profiles**: Inspired by PAHFIT (Smith+07), the PAH features are modelled as a series of Drude profiles where the shape is allowed to vary to allow accurate PAH flux measurements in a variety of environments. We also use a prior on the PAH band shapes to prevent overfitting in cases of low signal to noise.
+- **Easy to use GUI**: Simple user interface to quickly fit spectra with a variety of options to swap out extinction curves, ice templates etc.
 
 ---
 
@@ -48,19 +48,19 @@ matplotlib
 
 ## 🚀 Installation
 
-### Via pip (recommended)
-
-```bash
-pip install spirit-jwst
+Download the files from GitHub and place into a suitable directory. To install enter the SPIRIT directory and run 
+```
+pip install -r requirements.txt
+```
+to install the required dependencies. To avoid messing up current installs you can create a new conda environment first using 
+```
+conda create -n SPIRIT_env python=3.6.3
+```
+and activate the environment with 
+```
+conda activate SPIRIT_env
 ```
 
-### From source
-
-```bash
-git clone https://github.com/FergusDonnan/SPIRIT.git
-cd SPIRIT
-pip install -e .
-```
 
 ---
 
@@ -68,63 +68,27 @@ pip install -e .
 
 ### Basic Usage
 
-```python
-import spirit
-
-# Load your JWST spectrum
-spectrum = spirit.load_spectrum('path/to/your/spectrum.fits')
-
-# Initialize the model
-model = spirit.Model(
-    # Model configuration parameters
-)
-
-# Fit the spectrum
-results = model.fit(spectrum)
-
-# Visualize results
-spirit.plot_results(results)
+The easiest way to run SPIRIT is with the GUI which is opened by running SPIRIT.py in the terminal:
 ```
+python SPIRIT.py
+```
+This will produce a popup with a variety of options before running the code. First, place a .txt file of the spectrum you would like to fit in the /Data directory. The file should have three columns, wavlength (micron) flux (Jy) error (Jy). The error values don't matter too much as the code will calculate the appropriate error values first before fitting. 
 
-### Advanced Example
+
+
+
 
 ```python
 # Example with custom PAH profiles and extinction model
 # Code example here
 ```
 
----
-
-## 📖 Documentation
-
-### Model Components
-
-#### Differential Extinction Continuum
-
-<!-- Detailed description of the continuum model -->
-
-#### PAH Profiles
-
-<!-- Detailed description of PAH modeling approach -->
-
-#### Dust Emission
-
-<!-- Detailed description of dust emission component -->
-
-### Tutorials
-
-- [Tutorial 1: Fitting a single NIRSpec spectrum](#)
-- [Tutorial 2: Working with MIRI MRS data](#)
-- [Tutorial 3: Custom PAH profile configuration](#)
-- [Tutorial 4: Batch processing multiple spectra](#)
-
-Full documentation available at:  <!-- Documentation URL -->
 
 ---
 
 ## 🔬 Science Applications
 
-SPIRIT has been developed to address key science questions including:
+SPIRIT has already been used in numerous works such as 
 
 - <!-- Science application 1 -->
 - <!-- Science application 2 -->
@@ -143,25 +107,8 @@ Section for example plots/figures showing:
 - Residuals
 -->
 
----
 
-## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/FergusDonnan/SPIRIT.git
-cd SPIRIT
-
-# Create development environment
-# Instructions here
-
-# Run tests
-# Test commands here
-```
 
 ---
 
@@ -204,32 +151,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 👥 Authors and Acknowledgments
 
-**Lead Developer**: <!-- Name and affiliation -->
-
-**Contributors**:
-- <!-- Contributor list -->
-
-**Acknowledgments**: 
-- <!-- Acknowledgment of funding, collaborators, etc. -->
 
 ---
 
 ## 📬 Contact
-
-- **Issues**: [GitHub Issues](https://github.com/FergusDonnan/SPIRIT/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/FergusDonnan/SPIRIT/discussions)
-- **Email**: <!-- Contact email -->
+Any issues please contact me:
+- **Email**: fdonnan@ucsd.edu
 
 ---
 
-## 🗺️ Roadmap
 
-- [ ] <!-- Planned feature 1 -->
-- [ ] <!-- Planned feature 2 -->
-- [ ] <!-- Planned feature 3 -->
-- [ ] Integration with other JWST analysis tools
 
 ---
 

@@ -89,7 +89,7 @@ import numpy as np
 
 
 
-# objs = ['VV114_NE']
+objs = ['VV114_NE']
 
 SPIRIT.RunModel(objs, Dust_Geometry = 'Differential', HI_ratios = 'Case B', Ices_6micron = False, BootStrap = False, N_bootstrap = 100, 
     useMCMC = False, InitialFit = False, lam_range=[1.5, 28.0], show_progress = True, N_MCMC = 5000, N_BurnIn = 15000, 
@@ -125,29 +125,26 @@ A variety of plots are generated including:
 Fluxes of the PAH features and emission lines are stored within the *Output.csv file. This file also containes equivalent widths and the continuum values at the corresponding wavelengths.
 
 ### Model Components
+This folder contains the various components of the best fit model which can be used for your own plotting, including the original spectrum with the error values updated using the values calculated by the code before fitting.
 
 
 
 ### Ext. Corrections
-
+This folder contains the extinction correction factors as a function of wavelength, which is of the form F_obs/F_intr, for the different estimates of extinction from the best fit. To calculate extinction corrected fluxes, take the extinction correction you would like to use and divide the observed flux by the value of the extinction correction factor at the corresponding wavelength. I would reccomend the H2 or HI estimated extinction for correcting the flux of emission features as the continuum can often be more buried than the source of emission.
 
 
 ---
 
 ##  Options
 
+There are a variety different options when running the code. These are presented 
+
 
 ---
 
 ## Additional Analysis
 
-<!-- 
-Section for example plots/figures showing: 
-- Input spectrum
-- Model fit
-- PAH flux measurements
-- Residuals
--->
+It is possible to infer the temperature and extinction of different components of the dust distribution by splitting the dust distribution at various points as was done in [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract). This is useful if the dust distribution shows distinct seperate components. The file ExtractComponents.py contains code to do this. 
 
 
 
@@ -189,10 +186,7 @@ archivePrefix = {arXiv},
 
 ```
 
-### Related Publications
 
-- <!-- Publication 1 -->
-- <!-- Publication 2 -->
 
 ---
 

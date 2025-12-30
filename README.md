@@ -7,7 +7,7 @@
 
 **S**pectral **I**nfra**R**ed **I**nference **T**ool
 
-A powerful Python tool for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles.
+A powerful Python tool for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles. 
 
 
 
@@ -17,7 +17,10 @@ A powerful Python tool for modeling JWST NIRSpec and MIRI spectra using differen
 
 ## 🌟 Overview
 
-SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra enabling one to infer Polycyclic Aromatic Hydrocarbon (PAH) fluxes and characterise the nature of the dust emission/extinction. The tool was first presented in [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract). 
+SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra enabling one to infer Polycyclic Aromatic Hydrocarbon (PAH) fluxes and characterise the nature of the dust emission/extinction. The tool was first presented in [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract). An example fit to an obscured galaxy nucleus is shown below with the inferred 2D dust distribution.
+
+
+![ExampleFit](https://github.com/user-attachments/assets/202e9c9a-da95-46df-b8df-263a0a015252)
 
 
 

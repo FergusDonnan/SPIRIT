@@ -37,13 +37,24 @@ SPIRIT is a novel and flexible tool designed to analyze JWST infrared spectra en
 
 ## 📋 Requirements
 
+Run pip install -r requirements.txt to install all the required packages.
 ```
-python >= 3.8
-numpy
-scipy
-astropy
-matplotlib
-<!-- Additional dependencies -->
+astropy==6.0.1
+jax==0.4.6
+jax-cosmo==0.1.0
+jaxlib==0.4.6
+jaxopt==0.4.2
+jdaviz==2.7.1
+matplotlib==3.9.4
+numpy==1.24.4
+numpyro==0.11.0
+pandas==2.3.2
+SciencePlots==2.1.1
+ascipy==1.9.0
+tabulate==0.9.0
+tk==0.1.0
+tqdm==4.67.1
+
 ```
 
 ---
@@ -77,7 +88,7 @@ python SPIRIT.py
 This will produce a popup with a variety of options before running the code. First, place a .txt file of the spectrum you would like to fit in the /Data directory. The file should have three columns, wavlength (micron) flux (Jy) error (Jy). The error values don't matter too much as the code will calculate the appropriate error values first before fitting. Select the spectrum you would like to fit from the drop down menu.
 
 A fitting method then needs to be selected. By default the "Quick" method is a maximimum probability fit, "Boootstrap" will repeat the maximum probability fit N times to obtain uncertanties on the best fit parameters. "MCMC" using NUMPYRO NUTS sampling to sample the posterior probability to obtain uncertanties.
-After clicking run, the fit will run and populate the Results folder once completed. It may take some time to run depending on your device, a quick fit for a NIRSpec+MIRI spectrum should take at least a few hours to run.
+After clicking run, there will be a long pause while it compiles before running the fit. The Results folder will be populated once completed. It may take some time to run depending on your device, a quick fit for a NIRSpec+MIRI spectrum should take at a few hours to run.
 
 
 <img width="703" height="730" alt="GUI" src="https://github.com/user-attachments/assets/5704808c-5139-4702-be67-ae6f0539ff17" />
@@ -193,9 +204,11 @@ archivePrefix = {arXiv},
 
 ---
 
-## 📝 License
+## 📝 To do
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+While the bootstrap and MCMC methods provide uncertanties on the PAH fluxes, the uncertanties appear very small due to the high signal to noise of JWST spectra. A better method of estimating uncertanties needs to be added that accounts for sytematic errors in the model choices/assumptions rather than just errors based on the quality of the data. 
+
+
 
 ---
 

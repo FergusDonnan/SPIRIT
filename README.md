@@ -67,7 +67,7 @@ pip install -r requirements.txt
 ```
 to install the required dependencies. To avoid messing up current installs you can create a new conda environment first using 
 ```
-conda create -n SPIRIT_env python=3.6.3
+conda create -n SPIRIT_env python=3.9.23
 ```
 and activate the environment with 
 ```

@@ -94,7 +94,7 @@ A fitting method then needs to be selected. By default the "Quick" method is a m
 After clicking run, there will be a long pause while it compiles before running the fit. The Results folder will be populated once completed. It may take some time to run depending on your device, a quick fit for a NIRSpec+MIRI spectrum should take at a few hours to run.
 
 
-<img width="703" height="730" alt="GUI" src="https://github.com/user-attachments/assets/5704808c-5139-4702-be67-ae6f0539ff17" />
+<img width="701" height="729" alt="Screenshot 2025-12-31 at 1 14 54 PM" src="https://github.com/user-attachments/assets/e3e344d9-0225-464c-905f-eb418c55e9ce" />
 
 
 Alternatively, the code can be ran in a python file or jupyter notebook by calling the RunModel function from SPIRIT.py. The Run.py file has an example of this which is also shown below. This can be good to run multiple fits in sequence, specifiying the spectra name in the objs array.

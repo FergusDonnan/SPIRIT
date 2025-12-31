@@ -1,6 +1,7 @@
 <div align="center">
 
-![SPIRIT_Logo](https://github.com/user-attachments/assets/0fdd6af0-3090-47dd-b334-697f7079cf15)
+![Logo](https://github.com/user-attachments/assets/868f2ad0-7f98-48f7-8aca-9166ab1101f4)
+
 
 
 # SPIRIT

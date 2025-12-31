@@ -140,7 +140,7 @@ This folder contains the extinction correction factors as a function of waveleng
 
 ##  Options
 
-There are a variety different options when running the code. These are presented 
+There are a variety different options when running the code. These are presented in the GUI when running SPIRIT.py. There are a variety of drop down menus to swap out ice templates, extinction curves and the emissivity curve. To get your custom files to appear in the drop down menus, place your files in the appropriate directory.
 
 
 ---

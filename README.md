@@ -50,7 +50,7 @@ numpy==1.24.4
 numpyro==0.11.0
 pandas==2.3.2
 SciencePlots==2.1.1
-ascipy==1.9.0
+scipy==1.9.0
 tabulate==0.9.0
 tk==0.1.0
 tqdm==4.67.1

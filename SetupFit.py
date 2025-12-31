@@ -541,30 +541,30 @@ class Fit():
                 self.Npah +=1
                 self.pahcents.append(cents[i])
                # if (cents[i]==12.77):
-                #    self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.8, 1.5],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                #    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.8, 1.5],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                # else:
                 # if (cents[i]==6.2 or cents[i]==11.2 or cents[i] == 11.26 or cents[i] == 3.29 or cents[i] == 3.40):
-                #     self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': vals[i]/10.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 100.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)#[0.001, 50.0]
+                #     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': vals[i]/10.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)#[0.001, 50.0]
                 # else:
-                #     self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 0.000101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 0.00011],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)#[0.001, 50.0]
+                #     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 0.000101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 0.00011],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)#[0.001, 50.0]
 
                 if (Cont_Only == True):# or cents[i] == 10.6 or cents[i]==10.74 or cents[i]==11.0):
-                    self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 0.000101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 0.00011],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)#[0.001, 50.0]
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': 0.000101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 0.00011],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)#[0.001, 50.0]
 
                 else:
-                    self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': vals[i]/10.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 100.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)#[0.001, 50.0]
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': vals[i]/10.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)#[0.001, 50.0]
                 
 
-                self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "CENT("+"PAH"+feats[i]+")",'Description': 'PAH centre', 'Value': cent_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [cents[i] - 0.0025*cents[i], cents[i] + 0.0025*cents[i]],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-                self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "FWHM("+"PAH"+feats[i]+")",'Description': 'PAH width', 'Value': width_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [widths[i] - 0.1*widths[i], widths[i] + 0.1*widths[i]],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "CENT("+"PAH"+feats[i]+")",'Description': 'PAH centre', 'Value': cent_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [cents[i] - 0.0025*cents[i], cents[i] + 0.0025*cents[i]],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+                self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "FWHM("+"PAH"+feats[i]+")",'Description': 'PAH width', 'Value': width_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [widths[i] - 0.1*widths[i], widths[i] + 0.1*widths[i]],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 
 
                # print(asymm_vals[i])
                 if (cents[i] == 3.29):
-                    self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "ASYM("+"PAH"+feats[i]+")",'Description': 'PAH asymm', 'Value': asymm_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [asymm_pr[i]-0.5*abs(asymm_pr[i]), asymm_pr[i]+10.0*abs(asymm_pr[i])],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "ASYM("+"PAH"+feats[i]+")",'Description': 'PAH asymm', 'Value': asymm_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [asymm_pr[i]-0.5*abs(asymm_pr[i]), asymm_pr[i]+10.0*abs(asymm_pr[i])],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
                 else:
-                    self.parameters = self.parameters.append({ 'Section': 'PAH', 'Component': feats[i],'Name': "ASYM("+"PAH"+feats[i]+")",'Description': 'PAH asymm', 'Value': asymm_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [asymm_pr[i]-0.5*abs(asymm_pr[i]), asymm_pr[i]+0.5*abs(asymm_pr[i])],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "ASYM("+"PAH"+feats[i]+")",'Description': 'PAH asymm', 'Value': asymm_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [asymm_pr[i]-0.5*abs(asymm_pr[i]), asymm_pr[i]+0.5*abs(asymm_pr[i])],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
         print('Npah', self.Npah)
         # Continuum
@@ -576,28 +576,28 @@ class Fit():
             #for i in range(int(self.grid_size[0]*self.grid_size[1] +self.grid_size[1])):
             for i in range(int(self.grid_size[0]*self.grid_size[1])):
 
-                 #self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': np.random.uniform(0.1   , 1.0), '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 1.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                 #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': np.random.uniform(0.1   , 1.0), '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 1.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 # if (i==19 or i==39 or i==59 or i ==79 or i ==99 or i == 119 or i ==139 or i ==159 or i ==179 or i ==199 or i ==219 or i== 239 or i== 259):
-                #     self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': np.random.uniform(-9.999), '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , -9.99],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                #     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': np.random.uniform(-9.999), '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , -9.99],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 # else:
                 try:
-                    self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': A_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': A_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 except:
-                    self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': -9.0, '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                    self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': -9.0, '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
-            self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 99.24, '+Error': 0.0, '-Error': 0.0,'Prior': [1.0   , 1000.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 99.24, '+Error': 0.0, '-Error': 0.0,'Prior': [1.0   , 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
             if (np.min(lam)>7.0 or St_Cont == True):
                 stellar_est = 0.00011
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   ,  50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   ,  50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
    
             if (min(lam)<4.5):
-                self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Ices','Name': "Ice Frac",'Description': 'NIR Ices Frac', 'Value': 0.9, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001, 1.5],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Ices','Name': "Ice Frac",'Description': 'NIR Ices Frac', 'Value': 0.9, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001, 1.5],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
-            #self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
         
 
@@ -608,9 +608,9 @@ class Fit():
 
             self.grid_size = [20, 20]
             for i in range(int(3*self.grid_size[1] +self.grid_size[1])):
-                 self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.00001   , 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.00001   , 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             
-            self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 1000.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
 
@@ -618,12 +618,12 @@ class Fit():
             Temps =  np.concatenate((np.logspace(np.log10(20), np.log10(1500), 20), [5000.0]))
             NBBs = 20#len(Temps)
             for i in range(NBBs):
-                self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'BB Amp', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0	, 1000.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Continuum', 'Component': 'Continuum','Name': "tau_9.8",'Description': 'Optical Depth', 'Value': .1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001	, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': 9.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 100.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': 0.00101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 0.0011],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            #self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+                self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'BB Amp', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0	, 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "tau_9.8",'Description': 'Optical Depth', 'Value': .1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001	, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': 9.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': 0.00101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 0.0011],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
 
@@ -637,61 +637,61 @@ class Fit():
             upper = 0.0011   
 
         print(upper)
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ice','Name': "\u03C4_Ice",'Description': 'Ice Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001,upper],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "\u03C4_CH",'Description': 'CH Opt Depth', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001, 1.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ice','Name': "\u03C4_Ice",'Description': 'Ice Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001,upper],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "\u03C4_CH",'Description': 'CH Opt Depth', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001, 1.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
         if (min(lam)<4.5):
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O",'Description': '3 MicronIce Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2",'Description': 'CO2 Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O",'Description': '3 MicronIce Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2",'Description': 'CO2 Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             if (Fit_NIR_CH == True):
                 CH_up_lim = 3.0
             else:
                 CH_up_lim = 0.0101
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CH_NIR",'Description': 'CH Op Depth', 'Value': 0.01005, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CH_up_lim],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_x0",'Description': 'Ice Peak', 'Value': 4.6, '+Error': 0.0, '-Error': 0.0,'Prior': [4.55, 4.65],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.25],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_a",'Description': 'Ice Asym', 'Value': 4, '+Error': 0.0, '-Error': 0.0,'Prior': [-5.0, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-           # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COb_x0",'Description': 'Ice Peak', 'Value': 4.72, '+Error': 0.0, '-Error': 0.0,'Prior': [4.7, 4.75],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-           # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COb_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.25],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CH_NIR",'Description': 'CH Op Depth', 'Value': 0.01005, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CH_up_lim],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_x0",'Description': 'Ice Peak', 'Value': 4.6, '+Error': 0.0, '-Error': 0.0,'Prior': [4.55, 4.65],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.25],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COa_a",'Description': 'Ice Asym', 'Value': 4, '+Error': 0.0, '-Error': 0.0,'Prior': [-5.0, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+           # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COb_x0",'Description': 'Ice Peak', 'Value': 4.72, '+Error': 0.0, '-Error': 0.0,'Prior': [4.7, 4.75],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+           # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COb_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.25],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 #
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_x0",'Description': 'Ice Peak', 'Value': 4.8, '+Error': 0.0, '-Error': 0.0,'Prior': [4.7, 4.9],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.35],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_a",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-10, .0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_x0",'Description': 'Ice Peak', 'Value': 4.8, '+Error': 0.0, '-Error': 0.0,'Prior': [4.7, 4.9],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_fwhm",'Description': 'Ice fwhm', 'Value': 0.1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.05, 0.35],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "COc_a",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-10, .0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
             if (Fit_CO == True):
                 CO_up_lim = 5.0
             else:
                 CO_up_lim = 0.0101
             print(CO_up_lim)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COa",'Description': 'CO Depth', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CO_up_lim],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            #self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COa",'Description': 'Ice Asym', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 0.03],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COa",'Description': 'CO Depth', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CO_up_lim],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COa",'Description': 'Ice Asym', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 0.03],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
-            #self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COb",'Description': 'Ice Asym', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 5.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COc",'Description': 'CO Depth', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CO_up_lim],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            #self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COc",'Description': 'Ice Asym', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 0.03],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COb",'Description': 'Ice Asym', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 5.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COc",'Description': 'CO Depth', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CO_up_lim],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "tau_COc",'Description': 'Ice Asym', 'Value': 0.02, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 0.03],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
-            # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_x0_NIR",'Description': 'Ice Peak', 'Value': 3.0, '+Error': 0.0, '-Error': 0.0,'Prior': [2.9, 3.1],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_fwhm_NIR",'Description': 'Ice fwhm', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.3, 0.7],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_a_NIR",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0, -2.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_x0_NIR",'Description': 'Ice Peak', 'Value': 3.0, '+Error': 0.0, '-Error': 0.0,'Prior': [2.9, 3.1],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_fwhm_NIR",'Description': 'Ice fwhm', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.3, 0.7],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O_a_NIR",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0, -2.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_x0",'Description': 'Ice Peak', 'Value': 4.265, '+Error': 0.0, '-Error': 0.0,'Prior': [4.26, 4.275],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_fwhm",'Description': 'Ice fwhm', 'Value': 0.035, '+Error': 0.0, '-Error': 0.0,'Prior': [0.005, 0.05],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_a",'Description': 'Ice Asym', 'Value': 10, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0, 30.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_x0",'Description': 'Ice Peak', 'Value': 4.265, '+Error': 0.0, '-Error': 0.0,'Prior': [4.26, 4.275],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_fwhm",'Description': 'Ice fwhm', 'Value': 0.035, '+Error': 0.0, '-Error': 0.0,'Prior': [0.005, 0.05],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2_a",'Description': 'Ice Asym', 'Value': 10, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0, 30.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
 
-          #  self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO_1",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            # self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Sil','Name': "CO_2",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-            #  self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'Sil','Name': "CO_3",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+          #  self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO_1",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Sil','Name': "CO_2",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            #  self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Sil','Name': "CO_3",'Description': 'CO Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                
 
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_b",'Description': 'Ice Boxiness', 'Value': 2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [1.5, 10.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_x0",'Description': 'Ice Peak', 'Value': 6.05, '+Error': 0.0, '-Error': 0.0,'Prior': [6.0, 6.15],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_fwhm",'Description': 'Ice fwhm', 'Value': 0.7, '+Error': 0.0, '-Error': 0.0,'Prior': [0.6, 1.5],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        self.parameters = self.parameters.append({ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_a",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-6.0, -2.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        # self.parameters = self.parameters.append({ 'Section': 'Noise', 'Component': 'Noise Model','Name': "sig",'Description': 'Addidative Noise', 'Value': 0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0, 100.0],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
-        # self.parameters = self.parameters.append({ 'Section': 'Noise', 'Component': 'Noise Model','Name': "logN/S",'Description': 'Noise to Signal', 'Value': 0, '+Error': 0.0, '-Error': 0.0,'Prior': [-4, 1],'Prior Type': 'Uniform','Fixed': False}, ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_b",'Description': 'Ice Boxiness', 'Value': 2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [1.5, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_x0",'Description': 'Ice Peak', 'Value': 6.05, '+Error': 0.0, '-Error': 0.0,'Prior': [6.0, 6.15],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_fwhm",'Description': 'Ice fwhm', 'Value': 0.7, '+Error': 0.0, '-Error': 0.0,'Prior': [0.6, 1.5],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'H2O','Name': "H2O_a",'Description': 'Ice Asym', 'Value': -4, '+Error': 0.0, '-Error': 0.0,'Prior': [-6.0, -2.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Noise', 'Component': 'Noise Model','Name': "sig",'Description': 'Addidative Noise', 'Value': 0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0, 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        # self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Noise', 'Component': 'Noise Model','Name': "logN/S",'Description': 'Noise to Signal', 'Value': 0, '+Error': 0.0, '-Error': 0.0,'Prior': [-4, 1],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
         #Extract sampled parameters

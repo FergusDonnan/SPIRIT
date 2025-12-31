@@ -398,7 +398,7 @@ def loss(parameters, data, flux_orig, stellar_indx, pah_indx, cont_indx, ext_ind
     # pah_prior += -0.5*((PAH_5/PAH_62 - 0.245)/(0.5*0.245))**2
 
     lims = [3, 4, 5.1, 5.5, 5.9, 6.6, 7.2, 8.2, 9.0, 10.5, 11.7, 12.2, 13.0, 15.0, 18]
-    # pah_prior = 0.0
+    pah_prior = 0.0
     for i in range(len(lims)-1):
         x_PAH_1 = jnp.linspace(lims[i], lims[i+1], 100)
         model_PAHs1 =  SetupFit.PAH(x_PAH_1, ps[pah_indx], jax=True)
@@ -1478,7 +1478,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
             HI_fluxes.append(str_samples_lines[i]*1e-9)#*np.interp(lam, wav, ext))
 
 
-        output = output.append({ 'Name': setup.linenames[i], 'Rest Wavelength (micron)': setup.linecents[i],'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': setup.linenames[i], 'Rest Wavelength (micron)': setup.linecents[i],'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
         if (setup.linenames[i].startswith("H2") and setup.linecents[i]>5.0):
             H2_fluxes.append(str_samples_lines[i]*1e-9)#*np.interp(lam, wav, ext))
@@ -1592,8 +1592,8 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         if (tau_err!=0.0):
             ax[0].fill_between([35, 55], (tau_m + tau_u)*np.ones(2), (tau_m - tau_l)*np.ones(2), color='tab:pink', alpha=0.5, linewidth=0)
 
-    output = output.append({ 'Name': 'H2 Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_m,'S_err+': tau_u, 'S_err-': tau_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
-    output = output.append({ 'Name': 'H2 Temp', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': med_temp_m,'S_err+': med_temp_u, 'S_err-': med_temp_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+    output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_m,'S_err+': tau_u, 'S_err-': tau_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+    output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Temp', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': med_temp_m,'S_err+': med_temp_u, 'S_err-': med_temp_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
     Tau = np.interp(wav, ext_curve[0], ext_curve[1])
     np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'H2_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0)]))
@@ -1820,7 +1820,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
             #Eqw_l = "-"
             #Eqw_u = "-"
         
-        output = output.append({ 'Name': 'PAH', 'Rest Wavelength (micron)': setup.pahcents[i],'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH', 'Rest Wavelength (micron)': setup.pahcents[i],'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
 
     if (pah33==True):
@@ -1841,7 +1841,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 3.3 Complex', 'Rest Wavelength (micron)': 3.3,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 3.3 Complex', 'Rest Wavelength (micron)': 3.3,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
 
 
@@ -1864,7 +1864,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 5.2 Complex', 'Rest Wavelength (micron)': 5.25,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 5.2 Complex', 'Rest Wavelength (micron)': 5.25,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
     if (pah57==True):
         strr = np.percentile(str_samples_57*1e-9, [16,50,84])
@@ -1884,7 +1884,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 5.7 Complex', 'Rest Wavelength (micron)': 5.7,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 5.7 Complex', 'Rest Wavelength (micron)': 5.7,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
 
 
@@ -1906,7 +1906,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 6.2 Complex', 'Rest Wavelength (micron)': 6.2,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 6.2 Complex', 'Rest Wavelength (micron)': 6.2,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
     if (pah86==True):
         strr = np.percentile(str_samples_8*1e-9, [16,50,84])
@@ -1926,7 +1926,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 8.6 Complex', 'Rest Wavelength (micron)': 8.6,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 8.6 Complex', 'Rest Wavelength (micron)': 8.6,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
     if (pah77==True):
         strr = np.percentile(str_samples_7*1e-9, [16,50,84])
@@ -1946,7 +1946,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 7.7 Complex', 'Rest Wavelength (micron)': 7.7, 'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 7.7 Complex', 'Rest Wavelength (micron)': 7.7, 'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
         
     if (pah113==True):
@@ -1967,7 +1967,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 11.3 Complex', 'Rest Wavelength (micron)': 11.3,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 11.3 Complex', 'Rest Wavelength (micron)': 11.3,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
             
     if (pah127==True):
         strr = np.percentile(str_samples_12*1e-9, [16,50,84])
@@ -1987,7 +1987,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 12.7 Complex', 'Rest Wavelength (micron)': 12.7,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 12.7 Complex', 'Rest Wavelength (micron)': 12.7,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
             
             
     if (pah17==True):
@@ -2008,7 +2008,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': 'PAH 17.0 Complex', 'Rest Wavelength (micron)': 17.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 17.0 Complex', 'Rest Wavelength (micron)': 17.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
         
         
@@ -2029,7 +2029,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '6.2/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '6.2/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
     if (pah127 == True and pah113 == True):
         strr = np.percentile(str_samples_12/str_samples_11, [16,50,84])
@@ -2048,7 +2048,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '12.7/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '12.7/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
 
 
@@ -2079,7 +2079,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         tau_PAH_l = tau_PAH[1]-tau_PAH[0]
         tau_PAH = tau_PAH[1]
 
-        output = output.append({ 'Name': 'PAH Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_PAH,'S_err+': tau_PAH_u, 'S_err-': tau_PAH_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_PAH,'S_err+': tau_PAH_u, 'S_err-': tau_PAH_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
         Tau = np.interp(wav, ext_curve[0], ext_curve[1])
         np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'PAH_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_PAH_s[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_PAH_s[:, np.newaxis]*Tau), axis = 0)]))
@@ -2228,7 +2228,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
            # print(tau_HI)
             #print(tau_HI_err)
             #print('tau_HI = ', str(np.round(tau_HI_1, 2)), '+/-', str(np.round(tau_HI_err, 2)))
-            output = output.append({ 'Name': 'HI Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_HI,'S_err+': tau_HI_u, 'S_err-': tau_HI_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+            output =pd.concat([output, pd.DataFrame([{ 'Name': 'HI Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_HI,'S_err+': tau_HI_u, 'S_err-': tau_HI_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
             Tau = np.interp(wav, ext_curve[0], ext_curve[1])
             np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'HI_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_HI_samples[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_HI_samples[:, np.newaxis]*Tau), axis = 0)]))
@@ -2246,7 +2246,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
            # print(tau_HI)
             #print(tau_HI_err)
             #print('tau_HI = ', str(np.round(tau_HI_1, 2)), '+/-', str(np.round(tau_HI_err, 2)))
-            output = output.append({ 'Name': 'log n (HI cm^-3)', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': gas_den,'S_err+': gas_den_u, 'S_err-': gas_den_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+            output =pd.concat([output, pd.DataFrame([{ 'Name': 'log n (HI cm^-3)', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': gas_den,'S_err+': gas_den_u, 'S_err-': gas_den_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
         else:
             print('Using Case B')
 
@@ -2282,7 +2282,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
             tau_HI_l = np.nanpercentile(tau_HI_samples, 50.0) - np.nanpercentile(tau_HI_samples, 16.0)
             tau_HI_u = np.nanpercentile(tau_HI_samples, 84.0) - np.nanpercentile(tau_HI_samples, 50.0)
             tau_HI = np.nanmean(tau_HI_samples)#[0]
-            output = output.append({ 'Name': 'HI Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_HI,'S_err+': tau_HI_u, 'S_err-': tau_HI_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+            output =pd.concat([output, pd.DataFrame([{ 'Name': 'HI Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_HI,'S_err+': tau_HI_u, 'S_err-': tau_HI_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
             Tau = np.interp(wav, ext_curve[0], ext_curve[1])
             np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'HI_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_HI_samples[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_HI_samples[:, np.newaxis]*Tau), axis = 0)]))
@@ -2351,7 +2351,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '8.6/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '8.6/11.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
     if (pah62 == True and pah77 == True):
         strr = np.percentile(str_samples_6/str_samples_7, [16,50,84])
@@ -2370,7 +2370,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '6.2/7.7', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '6.2/7.7', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
     if (pah113 == True and pah77 == True):
         strr = np.percentile(str_samples_11/str_samples_7, [16,50,84])
@@ -2389,7 +2389,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '11.3/7.7', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '11.3/7.7', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
     
     if (pah17 == True and pah62 == True):
         strr = np.percentile(str_samples_6/str_samples_17, [16,50,84])
@@ -2408,7 +2408,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '6.2/17.0', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '6.2/17.0', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
    
 
 
@@ -2430,7 +2430,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '11.3/3.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '11.3/3.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
     if (pah17 == True and pah33 == True):
         strr = np.percentile(str_samples_33/str_samples_17, [16,50,84])
@@ -2449,7 +2449,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '3.3/17.0', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '3.3/17.0', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
    
 
     if (pah62 == True and pah33 == True):
@@ -2469,17 +2469,17 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output = output.append({ 'Name': '6.2/3.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': '6.2/3.3', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
    
 
 
     # Extinction
-    #output = output.append({ 'Name': 'tau_9.8 ', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': -1.0*jnp.log(SetupFit.ReturnExt(jnp.array([9.8]), ps[cont_indx], ExtType)),'S_err+': 0.0, 'S_err-': 0.0, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+    #output =pd.concat([output, pd.DataFrame([{ 'Name': 'tau_9.8 ', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': -1.0*jnp.log(SetupFit.ReturnExt(jnp.array([9.8]), ps[cont_indx], ExtType)),'S_err+': 0.0, 'S_err-': 0.0, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
     if (ExtType ==0.0):
-        output = output.append({ 'Name': 'Full_mean_tau', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': mean_tau3_m,'S_err+': mean_tau3_u, 'S_err-': mean_tau3_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
-        output = output.append({ 'Name': 'Full_mean_T', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': mean_T3_m,'S_err+': mean_T3_u, 'S_err-': mean_T3_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'Full_mean_tau', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': mean_tau3_m,'S_err+': mean_tau3_u, 'S_err-': mean_tau3_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'Full_mean_T', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': mean_T3_m,'S_err+': mean_T3_u, 'S_err-': mean_T3_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
-        output = output.append({ 'Name': 'Stellar Ext.', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': tau_stellar,'S_err+': tau_stellar_u, 'S_err-': tau_stellar_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}, ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'Stellar Ext.', 'Rest Wavelength (micron)': 9.8,'Strength (10^-17 W/m^2)': tau_stellar,'S_err+': tau_stellar_u, 'S_err-': tau_stellar_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
             
 

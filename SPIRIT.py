@@ -121,7 +121,15 @@ if __name__ == '__main__':
     options = sorted(options)
     root = Tk()
     root.title("SPIRIT - SPectral InfraRed Inference Tool")
-    root.geometry("675x800")
+    root.geometry("700x700")  # Increased height to accommodate logo
+
+    # Set custom icon for taskbar
+    try:
+        root.iconphoto(True, tk.PhotoImage(file=dir_path + "/Icon.png"))
+    except:
+        pass  # If icon file not found, just use default
+    
+
     
     # Make window pop up and grab focus
     root.lift()
@@ -129,15 +137,35 @@ if __name__ == '__main__':
     root.after_idle(root.attributes, '-topmost', False)
     root.focus_force()
 
-    # Create main container
-    main_frame = ttk.Frame(root, padding="10")
-    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    
     # Configure grid weights
     root.columnconfigure(0, weight=1)
-    root.rowconfigure(0, weight=1)
+    root.rowconfigure(0, weight=0)  # Logo row - no expansion
+    root.rowconfigure(1, weight=1)  # Main content row - expands
     
-    # Left panel - Basic options
+    # Add logo at the very top of root, not in main_frame
+    try:
+        logo_image = PIL.Image.open(dir_path + "/Logo.jpg")
+        # Resize logo to fit nicely (adjust dimensions as needed)
+        logo_image = logo_image.resize((400, 150), PIL.Image.LANCZOS)
+        logo_photo = ImageTk.PhotoImage(logo_image)
+        logo_label = tk.Label(root, image=logo_photo)
+        logo_label.image = logo_photo  # Keep a reference to prevent garbage collection
+        logo_label.grid(row=0, column=0, pady=(10, 10), sticky='n')
+    except Exception as e:
+        # If logo can't be loaded, show text instead
+        tk.Label(root, text="SPIRIT - SPectral InfraRed Inference Tool", 
+                 font=('Helvetica', 16, 'bold')).grid(row=0, column=0, pady=(10, 10), sticky='n')
+
+    # Create main container BELOW the logo
+    main_frame = ttk.Frame(root, padding="10")
+    main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    
+    # Configure main_frame grid weights
+    main_frame.columnconfigure(0, weight=1)
+    main_frame.columnconfigure(1, weight=1)
+    main_frame.columnconfigure(2, weight=1)
+    
+    # Left panel - Basic options (back to row 0 in main_frame)
     left_panel = ttk.LabelFrame(main_frame, text="Basic Options", padding="10")
     left_panel.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
     
@@ -185,7 +213,7 @@ if __name__ == '__main__':
     
     left_panel.columnconfigure(1, weight=1)
     
-    # Middle panel - Fitting options
+    # Middle panel - Fitting options (back to row 0 in main_frame)
     middle_panel = ttk.LabelFrame(main_frame, text="Fitting Options", padding="10")
     middle_panel.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
     
@@ -252,7 +280,7 @@ if __name__ == '__main__':
     FitMethod_.trace("w", options_callback)
     middle_panel.columnconfigure(1, weight=1)
     
-    # Right panel - Advanced options toggle
+    # Right panel - Advanced options toggle (back to row 0 in main_frame)
     right_panel = ttk.LabelFrame(main_frame, text="Advanced Options", padding="10")
     right_panel.grid(row=0, column=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=5)
     
@@ -266,7 +294,7 @@ if __name__ == '__main__':
     
     right_panel.columnconfigure(1, weight=1)
     
-    # Bottom panel - Advanced options content (spans all columns)
+    # Bottom panel - Advanced options content (back to row 1 in main_frame)
     advanced_panel = ttk.Frame(main_frame, padding="10")
     advanced_panel.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=5)
     
@@ -426,7 +454,7 @@ if __name__ == '__main__':
     for i in range(4):
         advanced_panel.columnconfigure(i, weight=1)
     
-    # Button panel at bottom
+    # Button panel at bottom (back to row 2 in main_frame)
     button_panel = ttk.Frame(main_frame)
     button_panel.grid(row=2, column=0, columnspan=3, pady=10)
     

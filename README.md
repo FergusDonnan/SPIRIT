@@ -5,7 +5,7 @@
 
 # SPIRIT
 
-**S**pectral **I**nfra**R**ed **I**nference **T**ool
+**SP**ectral **I**nfra**R**ed **I**nference **T**ool
 
 A powerful Python tool for modeling JWST NIRSpec and MIRI spectra using differential extinction continuum model and flexible PAH profiles. 
 
@@ -61,11 +61,7 @@ tqdm==4.67.1
 
 ## 🚀 Installation
 
-Download the files from GitHub and place into a suitable directory. To install enter the SPIRIT directory and run 
-```
-pip install -r requirements.txt
-```
-to install the required dependencies. To avoid messing up current installs you can create a new conda environment first using 
+To avoid messing up current installs I recommend creating a new conda environment first using 
 ```
 conda create -n SPIRIT_env python=3.9.23
 ```
@@ -73,6 +69,12 @@ and activate the environment with
 ```
 conda activate SPIRIT_env
 ```
+
+Download the files from GitHub, unzip and place into a suitable directory. To install enter the SPIRIT directory and run 
+```
+pip install -r requirements.txt
+```
+to install the required dependencies. 
 That's all to install as everything is ran from this directory.
 
 ---

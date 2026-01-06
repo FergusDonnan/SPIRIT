@@ -173,11 +173,14 @@ It is possible to infer the temperature and extinction of different components o
 ## 🔬 Science Applications
 
 SPIRIT has already been used in numerous works such as 
+- [Ramos Almeida+25](https://ui.adsabs.harvard.edu/abs/2025arXiv251202629R/abstract): "Silicate emission in a type-2 quasar: JWST/MIRI constraints on torus geometry and radiative feedback"
 
-- <!-- Science application 1 -->
-- <!-- Science application 2 -->
-- <!-- Science application 3 -->
-- <!-- Science application 4 -->
+- [Hermosa Muñoz+25](https://ui.adsabs.harvard.edu/abs/2025A%26A...693A.321H/abstract): "MICONIC: Dual active galactic nuclei, star formation, and ionised gas outflows in NGC 6240 seen with MIRI/JWST"
+- [Ramos Almeida+24](https://ui.adsabs.harvard.edu/abs/2025A%26A...698A.194R/abstract): JWST MIRI reveals the diversity of nuclear mid-infrared spectra of nearby type 2 quasars"
+- [Pereira-Santaella+24](https://ui.adsabs.harvard.edu/abs/2024A%26A...689L..12P/abstract): "H3+ absorption and emission in local (U)LIRGs with JWST/NIRSpec: Evidence for high H2 ionization rates"
+- [Rigopoulou+24](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract): "Polycyclic aromatic hydrocarbon emission in galaxies as seen with JWST"
+- [Garcia-Bernete+24](https://ui.adsabs.harvard.edu/abs/2024A%26A...691A.162G/abstract): "The Galaxy Activity, Torus, and Outflow Survey (GATOS): V. Unveiling PAH survival and resilience in the circumnuclear regions of AGNs with JWST"
+
 ---
 
 ## 📄 Citation

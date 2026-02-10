@@ -565,7 +565,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     #SL2Mask = setup.SL2Mask
     SCALE = setup.scale
     print('N_data = ',len(data[0]))
-    print('N_params = ',len(sampled_indx))
+    print('N_params = ',setup.N_params)
     #ps = setup.ps
             
 

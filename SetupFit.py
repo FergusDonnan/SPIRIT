@@ -531,6 +531,8 @@ class Fit():
        1.09581045e-02, 3.83519948e+00, 2.94939181e-04, 3.73312011e-04,
        5.53321277e-04, 9.55146167e-03]
 
+
+        self.N_params = 0
         #print(len(cents), len(vals))
         feats = ['{:.3f}'.format(x) for x in cents]
         self.Npah = 0
@@ -553,11 +555,17 @@ class Fit():
 
                 else:
                     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "AMP("+"PAH"+feats[i]+")",'Description': 'PAH flux', 'Value': vals[i]/10.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001, 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)#[0.001, 50.0]
-                
+                    self.N_params += 1
 
                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "CENT("+"PAH"+feats[i]+")",'Description': 'PAH centre', 'Value': cent_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [cents[i] - 0.0025*cents[i], cents[i] + 0.0025*cents[i]],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'PAH', 'Component': feats[i],'Name': "FWHM("+"PAH"+feats[i]+")",'Description': 'PAH width', 'Value': width_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [widths[i] - 0.1*widths[i], widths[i] + 0.1*widths[i]],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
-                
+                if (Cont_Only == False):
+                    self.N_params += 2
+
+
+                if (asymm_pr[i] != 0.01):
+                    self.N_params += 1
+
 
                # print(asymm_vals[i])
                 if (cents[i] == 3.29):
@@ -584,17 +592,25 @@ class Fit():
                     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': A_vals[i], '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
                 except:
                     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': -9.0, '+Error': 0.0, '-Error': 0.0,'Prior': [-10.0   , 0.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+                self.N_params += 1
 
 
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 99.24, '+Error': 0.0, '-Error': 0.0,'Prior': [1.0   , 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.N_params += 1
 
             if (np.min(lam)>7.0 or St_Cont == True):
                 stellar_est = 0.00011
+            else:
+                self.N_params += 3 # 2 for stellar scale and 1 for extinction
+
+            
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': stellar_est/2.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   ,  50.0*stellar_est],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
    
             if (min(lam)<4.5):
                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Ices','Name': "Ice Frac",'Description': 'NIR Ices Frac', 'Value': 0.9, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001, 1.5],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+                if (St_Cont == False):
+                    self.N_params += 1 # for ice fraction
 
             #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
@@ -603,14 +619,14 @@ class Fit():
 
 
 
-        elif (ExtType == 'Differential_Parametric'):
-            #Temps=[35.0, 40.0, 50.0, 65.0, 90.0, 135.0, 200.0, 300.0,  500.0, 5000.0]
+        # elif (ExtType == 'Differential_Parametric'):
+        #     #Temps=[35.0, 40.0, 50.0, 65.0, 90.0, 135.0, 200.0, 300.0,  500.0, 5000.0]
 
-            self.grid_size = [20, 20]
-            for i in range(int(3*self.grid_size[1] +self.grid_size[1])):
-                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.00001   , 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        #     self.grid_size = [20, 20]
+        #     for i in range(int(3*self.grid_size[1] +self.grid_size[1])):
+        #          self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'Psi Value', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.00001   , 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             
-            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+        #     self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "Scale",'Description': 'Scale Factor', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
 
 
 
@@ -619,11 +635,14 @@ class Fit():
             NBBs = 20#len(Temps)
             for i in range(NBBs):
                 self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "A"+str(i+1),'Description': 'BB Amp', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0	, 1000.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+                self.N_params += 1
+
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Continuum', 'Component': 'Continuum','Name': "tau_9.8",'Description': 'Optical Depth', 'Value': .1, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001	, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale1",'Description': 'Scale Factor', 'Value': 9.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 100.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Scale2",'Description': 'Scale Factor', 'Value': 0.00101, '+Error': 0.0, '-Error': 0.0,'Prior': [0.001   , 0.0011],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             #self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "VelocityDisp",'Description': 'Dispersion', 'Value': 100.0, '+Error': 0.0, '-Error': 0.0,'Prior': [10.0   , 300.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Stellar', 'Component': 'Stellar','Name': "Star Ext.",'Description': 'Stellar Extinction', 'Value': 0.5, '+Error': 0.0, '-Error': 0.0,'Prior': [0.0001   , 5.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.N_params += 4
 
 
 
@@ -633,6 +652,7 @@ class Fit():
         # Ices and Silicate Emission Parameters
         if (Ices_6micron==True):
             upper= 3.0
+            self.N_params += 6
         else:
             upper = 0.0011   
 
@@ -644,8 +664,10 @@ class Fit():
         if (min(lam)<4.5):
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O",'Description': '3 MicronIce Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2",'Description': 'CO2 Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.N_params += 5 # 1 for H2O and 4 for CO2
             if (Fit_NIR_CH == True):
                 CH_up_lim = 3.0
+                self.N_params += 1 # for CH_NIR
             else:
                 CH_up_lim = 0.0101
             self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CH_NIR",'Description': 'CH Op Depth', 'Value': 0.01005, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, CH_up_lim],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
@@ -661,6 +683,7 @@ class Fit():
 
             if (Fit_CO == True):
                 CO_up_lim = 5.0
+                self.N_params += 8 # for CO_NIR and 2 sets of CO ice parameters
             else:
                 CO_up_lim = 0.0101
             print(CO_up_lim)
@@ -717,6 +740,7 @@ class Fit():
         self.sampled_indx = self.parameters.index[self.parameters["Fixed"] == False].to_numpy()
         
         self.fixed =self.parameters["Fixed"].to_numpy()
+
         
         self.pos=init_pos
 

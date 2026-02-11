@@ -1480,7 +1480,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
 
         output =pd.concat([output, pd.DataFrame([{ 'Name': setup.linenames[i], 'Rest Wavelength (micron)': setup.linecents[i],'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
 
-        if (setup.linenames[i].startswith("H2") and setup.linecents[i]>5.0):
+        if (setup.linenames[i].startswith("H2") and setup.linecents[i]>6.0):
             H2_fluxes.append(str_samples_lines[i]*1e-9)#*np.interp(lam, wav, ext))
             H2_linecents.append(setup.linecents[i])
 
@@ -1491,25 +1491,46 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
 
     #print(np.shape(H2_fluxes), np.shape(H2_linecents))
 
-    A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
-    g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
-    H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
-    H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
-    H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
+    # A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
+    # g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
+    # H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
+    # H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
+    # H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
+
+    # if (max(lam_)<17.0):
+    #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0])
+    #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0])
+    #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
+    #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279])
+    #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
+
+    # if (max(lam_)<12.2):
+    #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0])
+    #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0])
+    #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0])
+    #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665])
+    #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)'])
+
+    A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
+    g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
+    H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
+    H2_l0 = np.array([ 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
+    H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
 
     if (max(lam_)<17.0):
-        A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0])
-        g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0])
-        H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
-        H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279])
-        H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
+        A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0])
+        g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0])
+        H2_Eu = np.array([5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
+        H2_l0 = np.array([6.109, 6.910, 8.025, 9.665, 12.279])
+        H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
 
     if (max(lam_)<12.2):
-        A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0])
-        g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0])
-        H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0])
-        H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665])
-        H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)'])
+        A = np.array([ 11400.0, 5880.0, 2640.0, 980.0])
+        g = np.array([ 17.0, 45.0, 13.0, 33.0])
+        H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0])
+        H2_l0 = np.array([6.109, 6.910, 8.025, 9.665])
+        H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)'])
+
 
     #print(np.shape(A), np.shape(g))
     A = A[H2_l0 == H2_linecents]
@@ -1518,6 +1539,8 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     H2_labels   = H2_labels[H2_l0 == H2_linecents]
     H2_l0 = H2_l0[H2_l0 == H2_linecents]
     #print(np.shape(A), np.shape(g))
+    print('H2 lines used: ', H2_labels)
+    print('H2 lines cents: ', H2_l0)
 
     f = jnp.log10(abs(np.array(H2_fluxes)/(A*g)))
 
@@ -1525,7 +1548,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     # lss, SS = np.loadtxt('SilProfile.txt', unpack=True, usecols=[0,1])
 
     #D03_x, D03_y = np.loadtxt(dir_path+'/Ext.Curves/D03MWRV31.txt', unpack=True, usecols=[0,1])
-    taus = np.linspace(-2.0, 10, 999)
+    taus = np.linspace(0.0, 10, 999)
     Tau = np.interp(H2_l0, ext_curve[0], ext_curve[1])
     #Tau = np.interp(H2_l0, D03_x, D03_y )
 

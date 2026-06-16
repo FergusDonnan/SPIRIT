@@ -1283,14 +1283,14 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
             for j in range(setup.Npah):
             
              #   if (setup.pahcents[j] == 6.18 or setup.pahcents[j] == 6.30):
-                if (setup.pahcents[j] == 5.175 or setup.pahcents[j]== 5.24):
+                if (setup.pahcents[j] == 5.185 or setup.pahcents[j] == 5.237 or setup.pahcents[j] == 5.275):
 
                     line +=  SetupFit.PAH(wav, ps[pah_indx][int(4*j):int(4*j+4)])[0]*SCALE#/ext#[2]
                     
 
             eqws_samples_52[i] = np.trapz(y = line/cont, x=wav)
             str_samples_52[i] = np.trapz(y = line[::-1], x=nu[::-1])
-            cont_samples_52[i] = np.interp(5.25, wav, cont)
+            cont_samples_52[i] = np.interp(5.237, wav, cont)
             
 
         # PAH 5.7 complex
@@ -1875,7 +1875,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         str_l = strr[1]-strr[0]
         str_u = strr[2]-strr[1]
 
-        lam = 5.25
+        lam = 5.237
         
         cont = np.percentile(cont_samples_52*1.0e-9*2.9979246e14/(lam**2), [16,50,84])
         cont_med = cont[1]
@@ -1887,7 +1887,7 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
         Eqw_l = Eqw[1]-Eqw[0]
         Eqw_u = Eqw[2]-Eqw[1]
     
-        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 5.2 Complex', 'Rest Wavelength (micron)': 5.25,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'PAH 5.2 Complex', 'Rest Wavelength (micron)': 5.237,  'Strength (10^-17 W/m^2)': str_med,'S_err+': str_u, 'S_err-': str_l, 'Continuum (10^-17 W/m^2/um)': cont_med, 'C_err+': cont_u,'C_err-': cont_l,'Eqw (micron)': Eqw_med, 'E_err+': Eqw_u, 'E_err-': Eqw_l}])], ignore_index=True)
         
     if (pah57==True):
         strr = np.percentile(str_samples_57*1e-9, [16,50,84])

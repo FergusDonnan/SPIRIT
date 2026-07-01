@@ -1484,172 +1484,185 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
             H2_fluxes.append(str_samples_lines[i]*1e-9)#*np.interp(lam, wav, ext))
             H2_linecents.append(setup.linecents[i])
 
-    H2_fluxes = np.stack(H2_fluxes)
-   # print(np.shape(H2_fluxes))
-    H2_fluxes = np.transpose(H2_fluxes)
-    H2_linecents = np.array(H2_linecents)
+    if (max(lam_) < 9.0):
+        # Not enough wavelength coverage for a reliable H2 rotational-diagram
+        # extinction estimate (shortest usable H2 lines span ~6.1-8.0 micron,
+        # too few points/leverage in Eu to fit a smoothness-penalty tau).
+        print('Max wavelength < 9 micron: bypassing H2 extinction estimation.')
+        tau_m, tau_u, tau_l, tau_err = 0.0, 0.0, 0.0, 0.0
+        med_temp_m, med_temp_u, med_temp_l, med_temp_err = np.nan, 0.0, 0.0, 0.0
 
-    #print(np.shape(H2_fluxes), np.shape(H2_linecents))
+        output = pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_m,'S_err+': tau_u, 'S_err-': tau_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+        output = pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Temp', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': med_temp_m,'S_err+': med_temp_u, 'S_err-': med_temp_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
 
-    # A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
-    # g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
-    # H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
-    # H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
-    # H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
+        np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'H2_ext_fac.txt', np.transpose([wav, np.ones_like(wav), np.zeros_like(wav)]))
+    else:
+        H2_fluxes = np.stack(H2_fluxes)
+       # print(np.shape(H2_fluxes))
+        H2_fluxes = np.transpose(H2_fluxes)
+        H2_linecents = np.array(H2_linecents)
 
-    # if (max(lam_)<17.0):
-    #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0])
-    #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0])
-    #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
-    #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279])
-    #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
+        #print(np.shape(H2_fluxes), np.shape(H2_linecents))
 
-    # if (max(lam_)<12.2):
-    #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0])
-    #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0])
-    #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0])
-    #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665])
-    #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)'])
+        # A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
+        # g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
+        # H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
+        # H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
+        # H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
 
-    A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
-    g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
-    H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
-    H2_l0 = np.array([ 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
-    H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
+        # if (max(lam_)<17.0):
+        #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0, 275.0])
+        #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0, 9.0])
+        #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
+        #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665, 12.279])
+        #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
 
-    if (max(lam_)<17.0):
-        A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0])
-        g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0])
-        H2_Eu = np.array([5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
-        H2_l0 = np.array([6.109, 6.910, 8.025, 9.665, 12.279])
-        H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
+        # if (max(lam_)<12.2):
+        #     A = np.array([32360.0, 20000.0, 11400.0, 5880.0, 2640.0, 980.0])
+        #     g = np.array([21.0, 57.0, 17.0, 45.0, 13.0, 33.0])
+        #     H2_Eu = np.array([8677.0, 7196.0, 5828.0, 4585.0, 3473.0, 2503.0])
+        #     H2_l0 = np.array([5.053, 5.511, 6.109, 6.910, 8.025, 9.665])
+        #     H2_labels = np.array(['S(8)', 'S(7)', 'S(6)', 'S(5)', 'S(4)', 'S(3)'])
 
-    if (max(lam_)<12.2):
-        A = np.array([ 11400.0, 5880.0, 2640.0, 980.0])
-        g = np.array([ 17.0, 45.0, 13.0, 33.0])
-        H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0])
-        H2_l0 = np.array([6.109, 6.910, 8.025, 9.665])
-        H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)'])
+        A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0, 47.6])
+        g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0, 21.0])
+        H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0, 1681.0, 1015.0])
+        H2_l0 = np.array([ 6.109, 6.910, 8.025, 9.665, 12.279, 17.035])
+        H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)', 'S(1)'])
 
+        if (max(lam_)<17.0):
+            A = np.array([ 11400.0, 5880.0, 2640.0, 980.0, 275.0])
+            g = np.array([ 17.0, 45.0, 13.0, 33.0, 9.0])
+            H2_Eu = np.array([5828.0, 4585.0, 3473.0, 2503.0, 1681.0])
+            H2_l0 = np.array([6.109, 6.910, 8.025, 9.665, 12.279])
+            H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)', 'S(2)'])
 
-    #print(np.shape(A), np.shape(g))
-    A = A[H2_l0 == H2_linecents]
-    g = g[H2_l0 == H2_linecents]
-    H2_Eu  = H2_Eu[H2_l0 == H2_linecents]
-    H2_labels   = H2_labels[H2_l0 == H2_linecents]
-    H2_l0 = H2_l0[H2_l0 == H2_linecents]
-    #print(np.shape(A), np.shape(g))
-    print('H2 lines used: ', H2_labels)
-    print('H2 lines cents: ', H2_l0)
-
-    f = jnp.log10(abs(np.array(H2_fluxes)/(A*g)))
-
-    # ext_curve = np.loadtxt('CustomExtCurve3.txt', unpack=True, usecols=[0,1])
-    # lss, SS = np.loadtxt('SilProfile.txt', unpack=True, usecols=[0,1])
-
-    #D03_x, D03_y = np.loadtxt(dir_path+'/Ext.Curves/D03MWRV31.txt', unpack=True, usecols=[0,1])
-    taus = np.linspace(0.0, 10, 999)
-    Tau = np.interp(H2_l0, ext_curve[0], ext_curve[1])
-    #Tau = np.interp(H2_l0, D03_x, D03_y )
-
-    smooth = []
-    for i in range(len(taus)):
-        ext_cor = np.exp(-taus[i]*Tau)
-        f = np.log10(abs(np.array(H2_fluxes/ext_cor)/(A*g)))#, axis=0)#[4:]
-        f = f[:, np.argsort(H2_Eu)]
-        smooth.append(np.sum((f[:, :-2] - 2.0*f[:, 1:-1]+f[:, 2:])**2, axis=1))
-    # plt.plot(taus, smooth)
-    smooth = np.stack(smooth)
-
-    tau_s=np.empty(np.shape(smooth)[1])
-    for l in range(np.shape(smooth)[1]):
-        if (len( taus[smooth[:,l]==np.min(smooth[:,l])])> 1 or len( taus[smooth[:,l]==np.min(smooth[:,l])])==0 ):
-            tau_s[l] = np.nan
-        else:
-            tau_s[l] = taus[smooth[:,l]==np.min(smooth[:,l])]
-
-    tau_err = np.nanstd(tau_s)
-    #tau = np.nanmean(tau_s)
-    tau = np.nanpercentile(tau_s, [16, 50, 84])
-    tau_l = tau[1]-tau[0]
-    tau_u = tau[2]-tau[1]
-    tau_m = tau[1]
-
-    print('H2_tau=',tau, '+/-', tau_err)
-     # plt.savefig(resultsdir+ObjName+'H2Smoothness.pdf')
-     # plt.close()
-     #plt.show()
-
-    f_org = np.mean(np.log10(abs(np.array(H2_fluxes)/(A*g))), axis=0)#[4:]
-    f_org_err = np.std(np.log10(abs(np.array(H2_fluxes)/(A*g))), axis=0)
-    f_0 = f_org[-1]
-    ext_cor = np.exp(-tau_m*Tau)
-
-    f_samples = np.log10(abs(np.array(H2_fluxes/ext_cor)/(A*g)))
-    f = np.mean(f_samples, axis=0)#[4:]
-    f_err = np.std(f_samples, axis=0)#[4:]
+        if (max(lam_)<12.2):
+            A = np.array([ 11400.0, 5880.0, 2640.0, 980.0])
+            g = np.array([ 17.0, 45.0, 13.0, 33.0])
+            H2_Eu = np.array([ 5828.0, 4585.0, 3473.0, 2503.0])
+            H2_l0 = np.array([6.109, 6.910, 8.025, 9.665])
+            H2_labels = np.array(['S(6)', 'S(5)', 'S(4)', 'S(3)'])
 
 
-    temp_s = np.empty(np.shape(smooth)[1])
-    for l in range(np.shape(smooth)[1]):
-        gradient = np.diff(f_samples[l])/np.diff(H2_Eu)
-        Temps = -1.*np.log10(np.e)/gradient
-        temp_s[l] = np.median(Temps)#[2:])
-    #med_temp = np.mean(temp_s)
-    med_temp_err = np.std(temp_s)
-    med_temp = np.nanpercentile(temp_s, [16, 50, 84])
-    med_temp_l = med_temp[1] - med_temp[0]
-    med_temp_u = med_temp[2] - med_temp[1]
-    med_temp_m = med_temp[1]
+        #print(np.shape(A), np.shape(g))
+        A = A[H2_l0 == H2_linecents]
+        g = g[H2_l0 == H2_linecents]
+        H2_Eu  = H2_Eu[H2_l0 == H2_linecents]
+        H2_labels   = H2_labels[H2_l0 == H2_linecents]
+        H2_l0 = H2_l0[H2_l0 == H2_linecents]
+        #print(np.shape(A), np.shape(g))
+        print('H2 lines used: ', H2_labels)
+        print('H2 lines cents: ', H2_l0)
 
-    print('H_2 Temperature = ', med_temp_m, "+/-", med_temp_err)
-     # ax[0].scatter(np.log10(med_temp), np.log(tau), s=5, c='tab:red', marker='x')
-     # ax[0].annotate('H$_2$', (np.log10(med_temp), np.log(tau)), color='tab:red')
-    # ax[0].scatter(med_temp, tau, s=5, c='tab:red', marker='x')
-    # ax[0].errorbar(med_temp, tau, ms=2, color='tab:red', marker='.', xerr = med_temp_err, yerr=tau_err)
+        f = jnp.log10(abs(np.array(H2_fluxes)/(A*g)))
 
-    # ax[0].annotate('H$_2$', (med_temp, tau), color='tab:red')
-    if (ExtType == 0.0):
+        # ext_curve = np.loadtxt('CustomExtCurve3.txt', unpack=True, usecols=[0,1])
+        # lss, SS = np.loadtxt('SilProfile.txt', unpack=True, usecols=[0,1])
 
-        ax[0].hlines(tau_m, 35, 55, colors='tab:pink', lw = 1, label='H$_2$', alpha = 0.8)
-        if (tau_err!=0.0):
-            ax[0].fill_between([35, 55], (tau_m + tau_u)*np.ones(2), (tau_m - tau_l)*np.ones(2), color='tab:pink', alpha=0.5, linewidth=0)
+        #D03_x, D03_y = np.loadtxt(dir_path+'/Ext.Curves/D03MWRV31.txt', unpack=True, usecols=[0,1])
+        taus = np.linspace(0.0, 10, 999)
+        Tau = np.interp(H2_l0, ext_curve[0], ext_curve[1])
+        #Tau = np.interp(H2_l0, D03_x, D03_y )
 
-    output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_m,'S_err+': tau_u, 'S_err-': tau_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
-    output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Temp', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': med_temp_m,'S_err+': med_temp_u, 'S_err-': med_temp_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+        smooth = []
+        for i in range(len(taus)):
+            ext_cor = np.exp(-taus[i]*Tau)
+            f = np.log10(abs(np.array(H2_fluxes/ext_cor)/(A*g)))#, axis=0)#[4:]
+            f = f[:, np.argsort(H2_Eu)]
+            smooth.append(np.sum((f[:, :-2] - 2.0*f[:, 1:-1]+f[:, 2:])**2, axis=1))
+        # plt.plot(taus, smooth)
+        smooth = np.stack(smooth)
 
-    Tau = np.interp(wav, ext_curve[0], ext_curve[1])
-    np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'H2_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0)]))
+        tau_s=np.empty(np.shape(smooth)[1])
+        for l in range(np.shape(smooth)[1]):
+            if (len( taus[smooth[:,l]==np.min(smooth[:,l])])> 1 or len( taus[smooth[:,l]==np.min(smooth[:,l])])==0 ):
+                tau_s[l] = np.nan
+            else:
+                tau_s[l] = taus[smooth[:,l]==np.min(smooth[:,l])]
 
-    plt.figure()
-    plt.plot(taus, np.median(smooth, axis = 1))
-    plt.fill_between(taus, np.nanpercentile(smooth, 16,axis = 1), np.nanpercentile(smooth, 84,axis = 1), color='black', alpha = 0.5, linewidth=0.0)
+        tau_err = np.nanstd(tau_s)
+        #tau = np.nanmean(tau_s)
+        tau = np.nanpercentile(tau_s, [16, 50, 84])
+        tau_l = tau[1]-tau[0]
+        tau_u = tau[2]-tau[1]
+        tau_m = tau[1]
 
-    plt.axvline(tau_m, ls='solid', c='tab:red', alpha =0.7, zorder=3)
-    plt.axvline(tau_m-tau_l, ls='dashed', c='tab:red', alpha =0.7, zorder=3)
-    plt.axvline(tau_m+tau_u, ls='dashed', c='tab:red', alpha =0.7, zorder=3)
-    plt.xlabel('$\\tau_{9.8}$')
-    plt.ylabel('Smoothness Penalty')
-    plt.savefig(resultsdir+"/Plots/"+ObjName+'H2Smoothness.pdf')
-    plt.close()
+        print('H2_tau=',tau, '+/-', tau_err)
+         # plt.savefig(resultsdir+ObjName+'H2Smoothness.pdf')
+         # plt.close()
+         #plt.show()
 
-    plt.figure()
-    plt.errorbar(H2_Eu, f_org-f_0, yerr=f_org_err, ls='none', marker='.', c='black', label='Original')
-    plt.errorbar(H2_Eu, f-f_0, yerr=f_err, ls='none', marker='.', c='tab:red', label='Ext. Corrected')
+        f_org = np.mean(np.log10(abs(np.array(H2_fluxes)/(A*g))), axis=0)#[4:]
+        f_org_err = np.std(np.log10(abs(np.array(H2_fluxes)/(A*g))), axis=0)
+        f_0 = f_org[-1]
+        ext_cor = np.exp(-tau_m*Tau)
 
-    for s in range(len(H2_labels)):
-        plt.annotate(H2_labels[s], xy = (1.05*H2_Eu[s], 1.05*(f-f_0)[s]), color='black' )
+        f_samples = np.log10(abs(np.array(H2_fluxes/ext_cor)/(A*g)))
+        f = np.mean(f_samples, axis=0)#[4:]
+        f_err = np.std(f_samples, axis=0)#[4:]
 
-   # plt.show()
 
-    plt.xlabel('$E_{u}/k$ (K)')
-    plt.ylabel('$\log(N/g)$ (Rel. units)')
-    #plt.annotate('$T = $'+str(np.round(med_temp, 0))+"$\pm$"+str(np.round(med_temp_err, 0))+' K, $\\tau = $'+str(np.round(tau,2))+"$\pm$"+str(np.round(tau_err,2)), xy = (0.2, 0.2), xycoords = 'axes fraction')
-    plt.annotate('$\\tau_{9.8} = $'+str(np.round(tau_m,2))+"$\pm$"+str(np.round(tau_err,2)), xy = (0.05, 0.2), xycoords = 'axes fraction')
-    plt.xlim(0.0, 10000.0)
-    plt.legend(frameon=True)
-    plt.savefig(resultsdir+"/Plots/"+ObjName+'H2 Rotation Plot.pdf')
-    plt.close()
+        temp_s = np.empty(np.shape(smooth)[1])
+        for l in range(np.shape(smooth)[1]):
+            gradient = np.diff(f_samples[l])/np.diff(H2_Eu)
+            Temps = -1.*np.log10(np.e)/gradient
+            temp_s[l] = np.median(Temps)#[2:])
+        #med_temp = np.mean(temp_s)
+        med_temp_err = np.std(temp_s)
+        med_temp = np.nanpercentile(temp_s, [16, 50, 84])
+        med_temp_l = med_temp[1] - med_temp[0]
+        med_temp_u = med_temp[2] - med_temp[1]
+        med_temp_m = med_temp[1]
+
+        print('H_2 Temperature = ', med_temp_m, "+/-", med_temp_err)
+         # ax[0].scatter(np.log10(med_temp), np.log(tau), s=5, c='tab:red', marker='x')
+         # ax[0].annotate('H$_2$', (np.log10(med_temp), np.log(tau)), color='tab:red')
+        # ax[0].scatter(med_temp, tau, s=5, c='tab:red', marker='x')
+        # ax[0].errorbar(med_temp, tau, ms=2, color='tab:red', marker='.', xerr = med_temp_err, yerr=tau_err)
+
+        # ax[0].annotate('H$_2$', (med_temp, tau), color='tab:red')
+        if (ExtType == 0.0):
+
+            ax[0].hlines(tau_m, 35, 55, colors='tab:pink', lw = 1, label='H$_2$', alpha = 0.8)
+            if (tau_err!=0.0):
+                ax[0].fill_between([35, 55], (tau_m + tau_u)*np.ones(2), (tau_m - tau_l)*np.ones(2), color='tab:pink', alpha=0.5, linewidth=0)
+
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Ext.', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': tau_m,'S_err+': tau_u, 'S_err-': tau_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+        output =pd.concat([output, pd.DataFrame([{ 'Name': 'H2 Temp', 'Rest Wavelength (micron)': 0.0,'Strength (10^-17 W/m^2)': med_temp_m,'S_err+': med_temp_u, 'S_err-': med_temp_l, 'Continuum (10^-17 W/m^2/um)': 0.0, 'C_err+': 0.0,'C_err-': 0.0,'Eqw (micron)': 0.0, 'E_err+': 0.0, 'E_err-': 0.0}])], ignore_index=True)
+
+        Tau = np.interp(wav, ext_curve[0], ext_curve[1])
+        np.savetxt(resultsdir+"/Ext. Corrections/"+ObjName+'H2_ext_fac.txt', np.transpose([wav, np.mean(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0), np.std(np.exp(-tau_s[:, np.newaxis]*Tau), axis = 0)]))
+
+        plt.figure()
+        plt.plot(taus, np.median(smooth, axis = 1))
+        plt.fill_between(taus, np.nanpercentile(smooth, 16,axis = 1), np.nanpercentile(smooth, 84,axis = 1), color='black', alpha = 0.5, linewidth=0.0)
+
+        plt.axvline(tau_m, ls='solid', c='tab:red', alpha =0.7, zorder=3)
+        plt.axvline(tau_m-tau_l, ls='dashed', c='tab:red', alpha =0.7, zorder=3)
+        plt.axvline(tau_m+tau_u, ls='dashed', c='tab:red', alpha =0.7, zorder=3)
+        plt.xlabel('$\\tau_{9.8}$')
+        plt.ylabel('Smoothness Penalty')
+        plt.savefig(resultsdir+"/Plots/"+ObjName+'H2Smoothness.pdf')
+        plt.close()
+
+        plt.figure()
+        plt.errorbar(H2_Eu, f_org-f_0, yerr=f_org_err, ls='none', marker='.', c='black', label='Original')
+        plt.errorbar(H2_Eu, f-f_0, yerr=f_err, ls='none', marker='.', c='tab:red', label='Ext. Corrected')
+
+        for s in range(len(H2_labels)):
+            plt.annotate(H2_labels[s], xy = (1.05*H2_Eu[s], 1.05*(f-f_0)[s]), color='black' )
+
+       # plt.show()
+
+        plt.xlabel('$E_{u}/k$ (K)')
+        plt.ylabel('$\log(N/g)$ (Rel. units)')
+        #plt.annotate('$T = $'+str(np.round(med_temp, 0))+"$\pm$"+str(np.round(med_temp_err, 0))+' K, $\\tau = $'+str(np.round(tau,2))+"$\pm$"+str(np.round(tau_err,2)), xy = (0.2, 0.2), xycoords = 'axes fraction')
+        plt.annotate('$\\tau_{9.8} = $'+str(np.round(tau_m,2))+"$\pm$"+str(np.round(tau_err,2)), xy = (0.05, 0.2), xycoords = 'axes fraction')
+        plt.xlim(0.0, 10000.0)
+        plt.legend(frameon=True)
+        plt.savefig(resultsdir+"/Plots/"+ObjName+'H2 Rotation Plot.pdf')
+        plt.close()
 
 
 

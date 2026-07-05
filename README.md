@@ -173,6 +173,10 @@ It is possible to infer the temperature and extinction of different components o
 ## 🔬 Science Applications
 
 SPIRIT has already been used in numerous works such as 
+-[Pantoni+26](https://ui.adsabs.harvard.edu/abs/2026A%26A...709A.237P/abstract): "MICONIC: JWST/MIRI-MRS reveals heavily reprocessed polycyclic aromatic hydrocarbons in the circumnuclear disc of Centaurus A"
+
+- [Garcia-Bernete+26](https://ui.adsabs.harvard.edu/abs/2026NatAs..10..420G/abstract): "Abundant hydrocarbons in a buried galactic nucleus with signs of carbonaceous grain and polycyclic aromatic hydrocarbon processing"
+
 - [Ramos Almeida+25](https://ui.adsabs.harvard.edu/abs/2025arXiv251202629R/abstract): "Silicate emission in a type-2 quasar: JWST/MIRI constraints on torus geometry and radiative feedback"
 
 - [Hermosa Muñoz+25](https://ui.adsabs.harvard.edu/abs/2025A%26A...693A.321H/abstract): "MICONIC: Dual active galactic nuclei, star formation, and ionised gas outflows in NGC 6240 seen with MIRI/JWST"

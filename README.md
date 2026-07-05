@@ -174,7 +174,7 @@ It is possible to infer the temperature and extinction of different components o
 
 SPIRIT has already been used in numerous works such as 
 
--[Pantoni+26](https://ui.adsabs.harvard.edu/abs/2026A%26A...709A.237P/abstract): "MICONIC: JWST/MIRI-MRS reveals heavily reprocessed polycyclic aromatic hydrocarbons in the circumnuclear disc of Centaurus A"
+- [Pantoni+26](https://ui.adsabs.harvard.edu/abs/2026A%26A...709A.237P/abstract): "MICONIC: JWST/MIRI-MRS reveals heavily reprocessed polycyclic aromatic hydrocarbons in the circumnuclear disc of Centaurus A"
 
 - [Garcia-Bernete+26](https://ui.adsabs.harvard.edu/abs/2026NatAs..10..420G/abstract): "Abundant hydrocarbons in a buried galactic nucleus with signs of carbonaceous grain and polycyclic aromatic hydrocarbon processing"
 

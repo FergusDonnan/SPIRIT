@@ -7,61 +7,142 @@ import PIL.Image
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
+def _load_specdata(objName, data_dir=None):
+    """Load spectrum for one object from Data/."""
+    if data_dir is None:
+        data_dir = dir_path
+    try:
+        lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.txt',
+                                          unpack=True, usecols=[0, 1, 2])
+    except Exception:
+        try:
+            lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.dat',
+                                              unpack=True, usecols=[0, 1, 2])
+        except Exception:
+            try:
+                lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.tbl',
+                                                  unpack=True, usecols=[0, 1, 2], skiprows=4)
+            except Exception:
+                try:
+                    lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.txt',
+                                                      unpack=True, usecols=[0, 1, 2], skiprows=4)
+                except Exception:
+                    try:
+                        lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.dat',
+                                                          unpack=True, usecols=[0, 1, 2], skiprows=4)
+                    except Exception:
+                        lams, flux, flux_err = np.loadtxt(data_dir + '/Data/' + objName + '.tbl',
+                                                          unpack=True, usecols=[0, 1, 2], skiprows=4)
+
+    flux_err = flux_err[~np.isnan(flux)]
+    lams = lams[~np.isnan(flux)]
+    flux = flux[~np.isnan(flux)]
+    lams = lams[flux_err != 0.0]
+    flux = flux[flux_err != 0.0]
+    flux_err = flux_err[flux_err != 0.0]
+    lams = lams[flux_err > 0.0]
+    flux = flux[flux_err > 0.0]
+    flux_err = flux_err[flux_err > 0.0]
+    return [lams, flux, flux_err]
+
+
+def _fit_single(objName, specdata, fit_kwargs):
+    """Run IrModel.RunFit for one object. Returns (objName, output or None, error or None)."""
+    z = fit_kwargs['z']
+    lam_range = fit_kwargs['lam_range']
+    skip = fit_kwargs['skip']
+    useMCMC = fit_kwargs['useMCMC']
+    BootStrap = fit_kwargs['BootStrap']
+    output = None
+    try:
+        if skip is False or useMCMC is False:
+            binNo = 2 if BootStrap else 0
+            output = IrModel.RunFit(objName, specdata, z, lam_range, binNo, useMCMC=False, **fit_kwargs['runfit'])
+        if useMCMC is True:
+            output = IrModel.RunFit(objName, specdata, z, lam_range, 1, useMCMC=True, **fit_kwargs['runfit'])
+        return objName, output, None
+    except Exception as exc:
+        return objName, None, exc
+
+
+def _parallel_fit_worker(task):
+    """Process-pool entry point: one object per worker."""
+    objName, spirit_dir, fit_kwargs = task
+    os.environ.setdefault('MPLBACKEND', 'Agg')
+    os.environ.setdefault('OMP_NUM_THREADS', '1')
+    os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
+    os.environ.setdefault('MKL_NUM_THREADS', '1')
+    print(f'Fitting {objName}...', flush=True)
+    specdata = _load_specdata(objName, spirit_dir)
+    return _fit_single(objName, specdata, fit_kwargs)
+
 
 # Callable function to run the fit
-def RunModel(objs, Dust_Geometry = 'Differential', HI_ratios = 'Case B', Ices_6micron = False, BootStrap = False, N_bootstrap = 100, useMCMC = False, InitialFit = False, lam_range=[1.5, 28.0], show_progress = True, N_MCMC = 5000, N_BurnIn = 15000, ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', RegStrength = 10000, Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, spec_res = 'h'):
-    
+def RunModel(objs, Dust_Geometry='Differential', HI_ratios='Case B', Ices_6micron=False,
+             BootStrap=False, N_bootstrap=100, useMCMC=False, InitialFit=False,
+             lam_range=[1.5, 28.0], show_progress=True, N_MCMC=5000, N_BurnIn=15000,
+             ExtCurve='D23ExtCurve', EmCurve='D24Emissivity', MIR_CH='CHExt_v3',
+             NIR_CH='CH_NIR', Fit_NIR_CH=False, NIR_Ice='NIR_Ice', NIR_CO2='NIR_CO2',
+             RegStrength=10000, Cont_Only=False, St_Cont=True, Extend=False, Fit_CO=False,
+             spec_res='h', n_workers=1):
+    """
+    Fit one or more spectra.
+
+    n_workers : int
+        Number of parallel processes. 1 = sequential (default). Each object is
+        independent and writes to its own Results/<obj>/ directory.
+    """
     z = 0.0
     skip = True
-    for i in range(len(objs)):
-        objName = objs[i]
-        print("")
-        print('Fitting ' +objName +'...') 
-        print("")
+    runfit_kwargs = dict(
+        ExtType_=Dust_Geometry, Ices_6micron=Ices_6micron, InitialFit=InitialFit,
+        BootStrap=BootStrap, N_bootstrap=N_bootstrap, HI_ratios=HI_ratios,
+        show_progress=show_progress, N_MCMC=N_MCMC, N_BurnIn=N_BurnIn,
+        ExtCurve=ExtCurve, EmCurve=EmCurve, MIR_CH=MIR_CH, NIR_CH=NIR_CH,
+        Fit_NIR_CH=Fit_NIR_CH, NIR_Ice=NIR_Ice, NIR_CO2=NIR_CO2,
+        RegStrength=RegStrength, Cont_Only=Cont_Only, St_Cont=St_Cont,
+        Extend=Extend, Fit_CO=Fit_CO, spec_res=spec_res,
+    )
+    fit_kwargs = dict(z=z, lam_range=lam_range, skip=skip, useMCMC=useMCMC,
+                      BootStrap=BootStrap, runfit=runfit_kwargs)
 
+    if n_workers is None or n_workers <= 1:
+        for objName in objs:
+            print("")
+            print('Fitting ' + objName + '...')
+            print("")
+            specdata = _load_specdata(objName)
+            objName, output, err = _fit_single(objName, specdata, fit_kwargs)
+            if err is not None:
+                raise err
+        return
 
+    from concurrent.futures import ProcessPoolExecutor, as_completed
 
-        try:
-            lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.txt', unpack=True, usecols=[0,1,2])
-        except:
+    if useMCMC and show_progress:
+        print('Note: progress bars may overlap when n_workers > 1; consider show_progress=False.')
+
+    tasks = [(objName, dir_path, fit_kwargs) for objName in objs]
+    n_workers = min(n_workers, len(tasks))
+    failures = []
+    with ProcessPoolExecutor(max_workers=n_workers) as pool:
+        futures = {pool.submit(_parallel_fit_worker, task): task[0] for task in tasks}
+        for future in as_completed(futures):
+            objName = futures[future]
             try:
-                lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.dat', unpack=True, usecols=[0,1,2])
-            except:
-                try:
-                    lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.tbl', unpack=True, usecols=[0,1,2], skiprows= 4)
-                except:
-                    try:
-                        lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.txt', unpack=True, usecols=[0,1,2], skiprows= 4)
-                    except:
-                        try:
-                            lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.dat', unpack=True, usecols=[0,1,2], skiprows= 4)
-                        except:
-                            lams, flux, flux_err = np.loadtxt(dir_path+'/Data/'+objName+'.tbl', unpack=True, usecols=[0,1,2], skiprows= 4)
+                name, output, err = future.result()
+                if err is not None:
+                    failures.append((name, err))
+                    print(f'FAILED {name}: {err}', flush=True)
+                else:
+                    print(f'Finished {name}', flush=True)
+            except Exception as exc:
+                failures.append((objName, exc))
+                print(f'FAILED {objName}: {exc}', flush=True)
 
-
-        flux_err = flux_err[~np.isnan(flux)]#/10.0
-        lams = lams[~np.isnan(flux)]
-        flux = flux[~np.isnan(flux)]
-
-        lams = lams[flux_err!=0.0]
-        flux = flux[flux_err!=0.0]
-        flux_err = flux_err[flux_err!=0.0]
-        lams = lams[flux_err>0.0]
-        flux = flux[flux_err>0.0]
-        flux_err = flux_err[flux_err>0.0]
-
-
-        specdata=[lams, flux, flux_err]
-
-        if (skip==False or useMCMC==False):
-            binNo = 0
-            if (BootStrap == True):
-                binNo = 2
-            output = IrModel.RunFit(objName, specdata, z, lam_range, binNo,  useMCMC=False,   ExtType_=Dust_Geometry, Ices_6micron=Ices_6micron, InitialFit=InitialFit, BootStrap=BootStrap, N_bootstrap = N_bootstrap,  HI_ratios = HI_ratios, show_progress=show_progress, N_MCMC = N_MCMC, N_BurnIn = N_BurnIn, ExtCurve = ExtCurve, EmCurve = EmCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH =  Fit_NIR_CH, NIR_Ice = NIR_Ice, NIR_CO2 = NIR_CO2, RegStrength = RegStrength,  Cont_Only = Cont_Only, St_Cont = St_Cont, Extend = Extend,  Fit_CO = Fit_CO, spec_res = spec_res)        
-        if (useMCMC==True):        
-            binNo = 1
-            output = IrModel.RunFit(objName, specdata, z, lam_range, binNo,  useMCMC=useMCMC,ExtType_=Dust_Geometry, Ices_6micron=Ices_6micron, InitialFit=InitialFit, BootStrap=BootStrap, N_bootstrap = N_bootstrap,  HI_ratios = HI_ratios, show_progress=show_progress, N_MCMC = N_MCMC, N_BurnIn = N_BurnIn, ExtCurve = ExtCurve, EmCurve = EmCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH =  Fit_NIR_CH, NIR_Ice = NIR_Ice, NIR_CO2 = NIR_CO2, RegStrength = RegStrength, Cont_Only = Cont_Only, St_Cont = St_Cont, Extend = Extend, Fit_CO = Fit_CO, spec_res = spec_res)        
-
+    if failures:
+        names = ', '.join(name for name, _ in failures)
+        raise RuntimeError(f'{len(failures)} fit(s) failed: {names}')
 
 ###############
 
@@ -220,17 +301,22 @@ if __name__ == '__main__':
     l5 = ttk.Label(middle_panel, text="Fitting Method")
     l5.grid(column=0, row=0, sticky=tk.W, pady=5)
     FitMethod_= tk.StringVar()
-    options_fit = ["Quick", "Quick", "BootStrap", "MCMC"]
+    # Display label includes '(Recommended)'; internal method / results folder remain "Quick".
+    _QUICK_MENU = "Quick (Recommended)"
+    options_fit = [_QUICK_MENU, _QUICK_MENU, "BootStrap", "MCMC"]
     dropdown_fit = ttk.OptionMenu(middle_panel, FitMethod_, *options_fit)
     dropdown_fit.grid(column=1, row=0, pady=5, sticky=(tk.W, tk.E))
-    CreateToolTip(l5, text='Choose the fitting method.\n'
-                            'Quick will find the max probability fitting model. This is the quickest method but will provide no uncertanties.\n'
-                            'BootStrap, will repeat the quick fit many times, resampling the data each time. This method therefore provides uncertanties.\n'
-                            'MCMC uses NumPyro NUTS to find the best fit, providing uncertanties.')
-    CreateToolTip(dropdown_fit, text='Choose the fitting method.\n'
-                            'Quick will find the max probability fitting model. This is the quickest method but will provide no uncertanties.\n'
-                            'BootStrap, will repeat the quick fit many times, resampling the data each time. This method therefore provides uncertanties.\n'
-                            'MCMC uses NumPyro NUTS to find the best fit, providing uncertanties.')
+    _fit_method_tip = (
+        'Choose the fitting method.\n'
+        'Quick (Recommended) finds the maximum-probability model and estimates '
+        'PAH flux uncertainties from fit residuals and continuum freedom. '
+        'This is the recommended way to run SPIRIT.\n'
+        'BootStrap repeats the Quick fit many times, resampling the data each time, '
+        'to provide sample-based uncertainties.\n'
+        'MCMC uses NumPyro NUTS to find the best fit, providing uncertainties.'
+    )
+    CreateToolTip(l5, text=_fit_method_tip)
+    CreateToolTip(dropdown_fit, text=_fit_method_tip)
 
     BootStrap_label = ttk.Label(middle_panel, text="Number of BootStraps")
     CreateToolTip(BootStrap_label, text='Select the number of time to resample/refit the data.')
@@ -473,7 +559,8 @@ if __name__ == '__main__':
     NBootstrap = 100
     N_MCMC = 5000
     N_BurnIn = 15000
-    if (FitMethod == 'Quick'):
+    # Menu may show "Quick (Recommended)"; method name / folder remain Quick.
+    if FitMethod == 'Quick' or FitMethod.startswith('Quick'):
         BootStrap = False
         useMCMC = False
     elif (FitMethod == 'BootStrap'):

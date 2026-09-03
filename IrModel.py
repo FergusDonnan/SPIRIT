@@ -363,15 +363,16 @@ def loss(parameters, data, flux_orig, stellar_indx, pah_indx, cont_indx, ext_ind
     PAH_10 = jnp.trapz(model_PAHs7,jnp.linspace(10.0, 11.1, 200))
 
 
-    pah_prior = 10.0*jnp.tanh(10.0*(1.0 - PAH_67/PAH_62 +1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(0.25 - PAH_67/PAH_77+1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(2.8 - PAH_127/PAH_12+1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(1.0 - PAH_12/PAH_11+1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(0.4 - PAH_10/PAH_11+1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(0.3 - PAH_5/PAH_62+1.0/10.0))-10.0
+    # pah_prior = 10.0*jnp.tanh(10.0*(1.0 - PAH_67/PAH_62 +1.0/10.0))-10.0 # --
+    # pah_prior = (10.0*jnp.tanh(10.0*(0.25 - PAH_67/PAH_77+1.0/10.0))-10.0)*10 # --
+    # pah_prior += 10.0*jnp.tanh(10.0*(2.8 - PAH_127/PAH_12+1.0/10.0))-10.0
+    # pah_prior += 10.0*jnp.tanh(10.0*(1.0 - PAH_12/PAH_11+1.0/10.0))-10.0
+    # pah_prior += 10.0*jnp.tanh(10.0*(0.4 - PAH_10/PAH_11+1.0/10.0))-10.0
+    pah_prior = (10.0*jnp.tanh(10.0*(0.3 - PAH_5/PAH_62+1.0/10.0))-10.0)*10 # --
+    pah_prior += (10.0*jnp.tanh(10.0*(0.3 - PAH_5/PAH_67+1.0/10.0))-10.0)*10
 
-    pah_prior += 10.0*jnp.tanh(10.0*(7.0 - PAH_77/PAH_62+1.0/10.0))-10.0
-    pah_prior += 10.0*jnp.tanh(10.0*(3.3 - PAH_77/PAH_11+1.0/10.0))-10.0
+    # pah_prior += 10.0*jnp.tanh(10.0*(7.0 - PAH_77/PAH_62+1.0/10.0))-10.0
+    # pah_prior += 10.0*jnp.tanh(10.0*(3.3 - PAH_77/PAH_11+1.0/10.0))-10.0
 
 
     # pah_prior = 100.0*jnp.tanh(100.0*(1.0 - PAH_67/PAH_62))-100.0
@@ -985,6 +986,10 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     np.savetxt(resultsdir+"/Model Components/"+ObjName+"PAHs_data.txt", np.transpose([lam, setup.flux_orig*SCALE - np.interp(lam, wav,cont*SCALE), E*SCALE]))
     np.savetxt(resultsdir+"/Model Components/"+ObjName+"FullModel.txt", np.transpose([wav,np.array(total)*SCALE]))
     np.savetxt(resultsdir+"/Model Components/"+ObjName+"Spectrum.txt", np.transpose([lam, setup.flux_orig*SCALE, E*SCALE]))
+    np.savetxt(
+        resultsdir + "/Model Components/" + ObjName + "MaskedSpectrum.txt",
+        np.transpose([lam, flux * SCALE, E * SCALE]),
+    )
     np.savetxt(resultsdir+"/Model Components/"+ObjName+"Stellar.txt", np.transpose([wav, stellar*SCALE]))
 
 #    np.savetxt(resultsdir+ObjName+"Extinction.txt", np.transpose([wav, extt*ext]))
@@ -2523,6 +2528,21 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     
     #print(output )
     output.to_csv(resultsdir+setup.ObjName+"Output.csv",  index=False)
+
+    # Quick method: residual-based PAH flux uncertainties (δ_c continuum term).
+    # Folder name remains "Quick"; BootStrap/MCMC keep their sample-based errors.
+    if binNo == 0:
+        try:
+            import EstimatePAHFluxErrors
+            print("")
+            print("Estimating residual-based PAH flux uncertainties (Quick)...")
+            output = EstimatePAHFluxErrors.apply_residual_pah_errors_to_quick_output(
+                resultsdir,
+                setup.ObjName,
+                output_df=output,
+            )
+        except Exception as exc:
+            print(f"Warning: residual PAH error estimation failed: {exc}")
     
     print("")
     print("")

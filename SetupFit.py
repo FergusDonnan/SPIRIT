@@ -42,6 +42,82 @@ numpyro.set_platform("cpu")
 #import pymc.sampling_jax
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+_EMISSION_LINES = [
+    "BrGamma", "BrBeta", "Pf11", "H2 O(4)", "PfEpsilon", "H2 O(5)", "PfDelta", "H2 O(6)",
+    "H2 S(15)", "H2 S(14)", "PfGamma", "H2 O(7)", "H2 S(13)", "H2 S(12)", "BrAlpha", "Hu13",
+    "HeI", "Hu12", "H2 S(10)", "PfBeta", "H2 S(8)", "[Fe II]", "[Fe VIII]", "H2 S(7)", "[Mg V]",
+    "HuGamma", "H2 S(6)", "H2 S(5)", "[Ar II]", "[Na III]", "PfAlpha", "HuBeta", "[NeVI]",
+    "[FeVII]", "[Ar V]", "H2 S(4)", "[Ar III]", "[FeVIII]", "H2 S(3)", "[S IV]", "H2 S(2)",
+    "HuAlpha", "[Ne II]", "[ArV]", "[Ne V] ", "[Ne III]", "H2 S(1)", "[FeII]", "[S III]",
+    "HI 8-7", "[Fe III]", "[NeV_]", "[O IV]", "[Fe II_]", "[SIII_]", "[Si II]",
+]
+_EMISSION_CENTS = [
+    2.1655, 2.63, 2.87, 3.00387, 3.04, 3.2350, 3.2961, 3.50081, 3.62636, 3.72558, 3.74,
+    3.80740, 3.84723, 3.99692, 4.05, 4.18, 4.30, 4.38, 4.40997, 4.6525, 5.053, 5.340, 5.447,
+    5.511, 5.609, 5.9066, 6.109, 6.910, 6.985, 7.318, 7.460, 7.5005, 7.6524, 7.8145, 7.901,
+    8.025, 8.991, 9.527, 9.665, 10.511, 12.279, 12.370, 12.8135, 13.102, 14.3217, 15.555,
+    17.035, 17.936, 18.713, 19.052, 22.925, 24.3175, 25.910, 25.989, 33.480, 34.815,
+]
+
+
+def apply_emission_line_mask(lam, flux, flux_err, z=0.0):
+    """Return a copy of flux with SetupFit emission-line masking applied."""
+    lam = np.asarray(lam, float)
+    flux = np.asarray(flux, float).copy()
+    flux_err = np.asarray(flux_err, float)
+    filt = scipy.signal.medfilt(flux, 41)
+    flux_sub = flux - filt
+
+    for i, cent in enumerate(_EMISSION_CENTS):
+        if not (np.min(lam) <= cent <= np.max(lam)):
+            continue
+
+        cent_range = 0.03
+        if cent * (1.0 + z) < 2.5:
+            width = 0.001
+            cent_range = 0.1
+        if 2.5 <= cent * (1.0 + z) < 4.9:
+            width = 0.003
+            cent_range = 0.1
+        if 4.9 <= cent * (1.0 + z) <= 7.65:
+            width = 0.005
+            cent_range = 0.1
+        if 7.51 <= cent * (1.0 + z) <= 11.71:
+            width = 0.012
+            cent_range = 0.1
+        if 10.5 <= cent * (1.0 + z) <= 18.2:
+            cent_range = 0.1
+            width = 0.015
+        if 17.71 <= cent * (1.0 + z) <= 28.1:
+            cent_range = 0.1
+            width = 0.02
+
+        cent_range = 5.0 * width
+        if _EMISSION_LINES[i] == "[NeVI]":
+            cent_range = 7.0 * width
+
+        mask_idx = (lam > (cent - cent_range)) & (lam < (cent + cent_range))
+        if not np.any(flux_sub[mask_idx]):
+            continue
+
+        sn = np.max(flux_sub[mask_idx]) / np.mean(flux_err[mask_idx])
+        if sn > 2.0 and cent != 3.2961:
+            flux_cut = np.concatenate(
+                (filt[lam < (cent - cent_range)], filt[lam > (cent + cent_range)])
+            )
+            lam_cut = np.concatenate(
+                (lam[lam < (cent - cent_range)], lam[lam > (cent + cent_range)])
+            )
+            in_mask = (lam > (cent - cent_range)) & (lam < (cent + cent_range))
+            flux[in_mask] = interp1d(
+                lam_cut,
+                flux_cut,
+                kind="linear",
+                fill_value="extrapolate",
+            )(lam[in_mask])
+
+    return flux
+
 
 #ls_i, ice = np.loadtxt("IceExt_v2.txt", unpack = True, usecols=[0,1])
 #ls_i, ice = np.loadtxt(dir_path+"/IceExt.txt", unpack = True, usecols=[0,1])
@@ -290,18 +366,20 @@ class Fit():
                 #mfs.append(max(flux_range))
 
                 cent_range = 5.0*width#0.01
+                if lines[i] == "[NeVI]":
+                    cent_range = 7.0 * width
                 mfs.append(cent_range)
                 #flux_sub -= Gauss(lam,  lam_range[flux_range == max(flux_range)][0], 0.001, max(flux_range), jax=False)
 
                 # Only mask line if it is actually detected
-                if (np.any(flux_sub[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))])): # Check for NIRSpec detector gap
-                    if (np.max(flux_sub[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))])>2.0*np.mean(flux_err[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))]) and cents[i]!=3.2961):
+                if np.any(flux_sub[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]):  # Check for NIRSpec detector gap
+                    if (np.max(flux_sub[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]) / np.mean(flux_err[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]) > 2.0) and cents[i] != 3.2961:
                         flux_cut = np.concatenate((filt[(lam<(cents[i]-cent_range))], filt[(lam>(cents[i]+cent_range))])) 
                         lam_cut =  np.concatenate((lam[(lam<(cents[i]-cent_range))], lam[(lam>(cents[i]+cent_range))])) 
                         flux[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))] = interp1d(lam_cut, flux_cut, kind='linear', fill_value='extrapolate')(lam[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))])
-                        print('Masking', lines[i], 'S/N=', np.max(flux_sub[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))])/np.mean(flux_err[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))]))
+                        print('Masking', lines[i], 'S/N=', np.max(flux_sub[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]) / np.mean(flux_err[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]))
                     else:
-                        print('Not Masking', lines[i], 'S/N=', np.max(flux_sub[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))])/np.mean(flux_err[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))]))
+                        print('Not Masking', lines[i], 'S/N=', np.max(flux_sub[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]) / np.mean(flux_err[(lam > (cents[i] - cent_range)) & (lam < (cents[i] + cent_range))]))
                # flux[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))] = filt[(lam>(cents[i]-cent_range)) & (lam<(cents[i]+cent_range))]
                 plt.axvline(cents[i]-cent_range, ls='dashed', color='grey', lw=.5)
                 plt.axvline(cents[i]+cent_range, ls='dashed', color='grey', lw=.5)

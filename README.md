@@ -166,6 +166,24 @@ There are a variety different options when running the code. These are presented
 
 It is possible to infer the temperature and extinction of different components of the dust distribution by splitting the dust distribution at various points as was done in [Donnan+24a](https://ui.adsabs.harvard.edu/abs/2024MNRAS.529.1386D/abstract). This is useful if the dust distribution shows distinct seperate components. The file ExtractComponents.py contains code to do this. 
 
+---
+
+## How Uncertainties Are Calculated
+
+A major issue with the high quality JWST spectra is that the errors of the integrated PAH fluxes are often far too small as the signal to noise of the data is high. Therefore the systematic error in the model assumptions is being ignored (how realistic is the continuum?). We therefore take the following approach to obtain realistic errors .
+<p>
+PAH flux uncertainties are estimated <strong>after</strong> the fit from the residuals and a continuum systematic term. Over each PAH feature we measure the residual scatter in a window of effective width <code>W<sub>eff</sub> = ∫f<sub>λ</sub> dλ / f<sub>peak</sub></code>, giving a noise uncertainty <code>σ<sub>noise</sub> = σ<sub>λ</sub> √(Σ<sub>i</sub> δλ<sub>i</sub><sup>2</sup>)</code>, where <code>σ<sub>λ</sub></code> is the residual standard deviation in that window and <code>δλ<sub>i</sub></code> is the local spectral spacing (which can vary where MIRI channels overlap).
+</p>
+<p>
+Residual noise alone underestimates the true uncertainty (e.g. the 7.7&nbsp;μm feature reaches a median ~1800σ in SF regions and ~170σ in nuclei). Continuum placement, especially at low EW, is a major systematic, so we add <code>σ<sub>C</sub> = ΔC × W<sub>eff</sub></code> with <code>ΔC = δ<sub>C</sub> C</code>. Torus-model mocks fitted with SPIRIT give a median δ<sub>C</sub> ~ 1–2% over 1–25&nbsp;μm; we adopt the conservative value δ<sub>C</sub> = 2%.
+</p>
+<p>
+The total uncertainty is <code>σ<sub>PAH</sub> = √(σ<sub>noise</sub><sup>2</sup> + σ<sub>C</sub><sup>2</sup>)</code>. The continuum term dominates in nuclei with strong continuum and low PAH EW, bringing the 7.7&nbsp;μm feature to a median ~180σ in SF regions and ~4σ in nuclei.
+</p>
+
+
+
+---
 
 
 ---
@@ -216,15 +234,6 @@ archivePrefix = {arXiv},
 
 
 
----
-
-## 📝 To do
-
-While the bootstrap and MCMC methods provide uncertanties on the PAH fluxes, the uncertanties appear very small due to the high signal to noise of JWST spectra. A better method of estimating uncertanties needs to be added that accounts for sytematic errors in the model choices/assumptions rather than just errors based on the quality of the data. 
-
-
-
----
 
 
 

@@ -160,7 +160,7 @@ def apply_emission_line_mask(lam, flux, flux_err, z=0.0):
 
 
 class Fit():
-    def __init__(self, objName, specdata, z, lam_range,   ExtType='Differential', Ices_6micron = False, ExtCurve = 'D23ExtCurve', EmCurve='D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice_ = 'NIR_Ice', NIR_CO2_ = 'NIR_CO2', Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, spec_res = 'h'):
+    def __init__(self, objName, specdata, z, lam_range,   ExtType='Differential', Ices_6micron = False, ExtCurve = 'D23ExtCurve', EmCurve='D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice_ = 'NIR_Ice', NIR_CO2_ = 'NIR_CO2', Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, Disable_Ices = False, spec_res = 'h'):
         lam, flux, flux_err = specdata
         lam = lam/(1.0+z)
 
@@ -740,9 +740,17 @@ class Fit():
 
 
         if (min(lam)<4.5):
-            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O",'Description': '3 MicronIce Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
-            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2",'Description': 'CO2 Opt Depth', 'Value': 1.0, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, 10.0],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            if (Disable_Ices == True):
+                ice_up = 0.0101
+                ice_val = 0.01005
+            else:
+                ice_up = 10.0
+                ice_val = 1.0
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "H2O",'Description': '3 MicronIce Opt Depth', 'Value': ice_val, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, ice_up],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
+            self.parameters = pd.concat([self.parameters,pd.DataFrame([{ 'Section': 'Extinction', 'Component': 'Ices','Name': "CO2",'Description': 'CO2 Opt Depth', 'Value': ice_val, '+Error': 0.0, '-Error': 0.0,'Prior': [0.01, ice_up],'Prior Type': 'Uniform','Fixed': False}])], ignore_index=True)
             self.N_params += 5 # 1 for H2O and 4 for CO2
+            if (Disable_Ices == True):
+                self.N_params -= 2
             if (Fit_NIR_CH == True):
                 CH_up_lim = 3.0
                 self.N_params += 1 # for CH_NIR

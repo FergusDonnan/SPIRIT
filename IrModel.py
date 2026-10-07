@@ -517,8 +517,8 @@ out1=jnp.empty(200)
 out2=[]
 out3=[] 
     
-def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Screen', Ices_6micron=False, InitialFit=False, BootStrap=False, N_bootstrap = 100,  HI_ratios = 'Case B', show_progress=True, N_MCMC = 5000, N_BurnIn = 15000, ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', RegStrength = 10000, Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, spec_res = 'h'):
-    setup = SetupFit.Fit(objName, specdata, z, lam_range,  ExtType_, Ices_6micron, ExtCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH = Fit_NIR_CH ,NIR_Ice_ = NIR_Ice, NIR_CO2_ = NIR_CO2, Cont_Only = Cont_Only, St_Cont = St_Cont, Extend = Extend, Fit_CO = Fit_CO, spec_res = spec_res)
+def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Screen', Ices_6micron=False, InitialFit=False, BootStrap=False, N_bootstrap = 100,  HI_ratios = 'Case B', show_progress=True, N_MCMC = 5000, N_BurnIn = 15000, ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', RegStrength = 10000, Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, Disable_Ices = False, spec_res = 'h'):
+    setup = SetupFit.Fit(objName, specdata, z, lam_range,  ExtType_, Ices_6micron, ExtCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH = Fit_NIR_CH ,NIR_Ice_ = NIR_Ice, NIR_CO2_ = NIR_CO2, Cont_Only = Cont_Only, St_Cont = St_Cont, Extend = Extend, Fit_CO = Fit_CO, Disable_Ices = Disable_Ices, spec_res = spec_res)
     ObjName = objName
 
 

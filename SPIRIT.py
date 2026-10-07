@@ -84,7 +84,7 @@ def RunModel(objs, Dust_Geometry='Differential', HI_ratios='Case B', Ices_6micro
              ExtCurve='D23ExtCurve', EmCurve='D24Emissivity', MIR_CH='CHExt_v3',
              NIR_CH='CH_NIR', Fit_NIR_CH=False, NIR_Ice='NIR_Ice', NIR_CO2='NIR_CO2',
              RegStrength=10000, Cont_Only=False, St_Cont=True, Extend=False, Fit_CO=False,
-             spec_res='h', n_workers=1):
+             Disable_Ices=False, spec_res='h', n_workers=1):
     """
     Fit one or more spectra.
 
@@ -101,7 +101,7 @@ def RunModel(objs, Dust_Geometry='Differential', HI_ratios='Case B', Ices_6micro
         ExtCurve=ExtCurve, EmCurve=EmCurve, MIR_CH=MIR_CH, NIR_CH=NIR_CH,
         Fit_NIR_CH=Fit_NIR_CH, NIR_Ice=NIR_Ice, NIR_CO2=NIR_CO2,
         RegStrength=RegStrength, Cont_Only=Cont_Only, St_Cont=St_Cont,
-        Extend=Extend, Fit_CO=Fit_CO, spec_res=spec_res,
+        Extend=Extend, Fit_CO=Fit_CO, Disable_Ices=Disable_Ices, spec_res=spec_res,
     )
     fit_kwargs = dict(z=z, lam_range=lam_range, skip=skip, useMCMC=useMCMC,
                       BootStrap=BootStrap, runfit=runfit_kwargs)
@@ -491,6 +491,12 @@ if __name__ == '__main__':
     CreateToolTip(l18, text='Include broad CO absoprtion at ~4.6 micron to account for CO ro-vibrational + ice band. (Useful for AGN/Obscured nuclei) )')
     CreateToolTip(C8, text='Include broad CO absoprtion at ~4.6 micron to account for CO ro-vibrational + ice band. (Useful for AGN/Obscured nuclei)')
 
+    l19 = ttk.Label(advanced_panel, text="Disable All Ices")
+    Disable_Ices = IntVar()
+    C9 = ttk.Checkbutton(advanced_panel, variable=Disable_Ices, onvalue=True, offvalue=False)
+    CreateToolTip(l19, text='Pin the 3 micron water ice and CO2 ice optical depths to ~0.')
+    CreateToolTip(C9, text='Pin the 3 micron water ice and CO2 ice optical depths to ~0.')
+
     def options_callback2(*args):
         if (CheckVar3.get() == True):
             # Grid in 4 columns for compact layout
@@ -529,10 +535,13 @@ if __name__ == '__main__':
             
             l18.grid(column=2, row=5, sticky=tk.W, pady=5, padx=5)
             C8.grid(column=3, row=5, pady=5, sticky=tk.W)
+
+            l19.grid(column=0, row=6, sticky=tk.W, pady=5, padx=5)
+            C9.grid(column=1, row=6, pady=5, sticky=tk.W)
         else:
             for widget in [ExtCurve_label, dropdown7, EmCurve_label, dropdown8, l7, dropdown9, 
                           l8, dropdown10, l9, dropdown11, l10, dropdown12, l13, C4_adv, 
-                          l14, dropdown13, l15, C5, l16, C6, l17, C7, l18, C8]:
+                          l14, dropdown13, l15, C5, l16, C6, l17, C7, l18, C8, l19, C9]:
                 widget.grid_remove()
 
     CheckVar3.trace("w", options_callback2)
@@ -590,6 +599,6 @@ if __name__ == '__main__':
     if (obj == ""):
         print('Exiting...')
     else:
-        RunModel([obj], Dust_Geometry = ExtType, HI_ratios = HI_ratios, Ices_6micron = CheckVar1.get(), BootStrap = BootStrap, N_bootstrap = NBootstrap, useMCMC = useMCMC, InitialFit = CheckVar4.get(), lam_range=[1.5, 28.0], show_progress = CheckVar2.get(), N_MCMC = N_MCMC, N_BurnIn = N_BurnIn, ExtCurve = ExtCurve, EmCurve=EmCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH = Fit_NIR_CH, NIR_Ice = NIR_Ice, NIR_CO2 = NIR_CO2, RegStrength=RegStrength, Cont_Only = Cont_Only.get(), St_Cont = St_Cont.get(), Extend = Extend.get(), Fit_CO = Fit_CO.get())
+        RunModel([obj], Dust_Geometry = ExtType, HI_ratios = HI_ratios, Ices_6micron = CheckVar1.get(), BootStrap = BootStrap, N_bootstrap = NBootstrap, useMCMC = useMCMC, InitialFit = CheckVar4.get(), lam_range=[1.5, 28.0], show_progress = CheckVar2.get(), N_MCMC = N_MCMC, N_BurnIn = N_BurnIn, ExtCurve = ExtCurve, EmCurve=EmCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH = Fit_NIR_CH, NIR_Ice = NIR_Ice, NIR_CO2 = NIR_CO2, RegStrength=RegStrength, Cont_Only = Cont_Only.get(), St_Cont = St_Cont.get(), Extend = Extend.get(), Fit_CO = Fit_CO.get(), Disable_Ices = Disable_Ices.get())
 
 

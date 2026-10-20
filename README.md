@@ -117,7 +117,11 @@ SPIRIT.RunModel(objs, Dust_Geometry = 'Differential', HI_ratios = 'Case B', Ices
 
 ```
 
+### Fitting a whole cube rather than an individual spaxel
 
+It is possible to fit the spectrum of every spaxel with one routine in SPIRIT. This is done by running RunCube.py where the CUBE_PATH points to the data cube and REDSHIFT specifies the redshift. The cube is recommend to be convolved to the spatial scale of the longest wavelength channel and needs to be in the format with two extensions. The first is the cube itself while the second holds the wavelengths of each frame of the cube. The output of the fitting is sent to its own folder in the Results directory.
+
+The cube fitting is set up to run on 4 cpu cores, where each core is fitting 1 spectrum. This can be adjusted with the N_WORKERS parameter.
 
 
 

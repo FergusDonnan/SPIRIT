@@ -22,6 +22,8 @@ from astropy.modeling import Parameter
 from astropy.modeling.functional_models import Gaussian1D
 from astropy.modeling.physical_models import Drude1D
 import os
+os.environ["JAX_PLATFORMS"] = "cpu"
+os.environ["JAX_PLATFORM_NAME"] = "cpu"
 from scipy.interpolate import CubicSpline, UnivariateSpline
 from scipy.special import gamma, factorial, legendre
 

@@ -31,6 +31,9 @@ from scipy.interpolate import CubicSpline
 #from dynesty.utils import resample_equal
 
 from scipy.stats import uniform, loguniform
+import os
+os.environ["JAX_PLATFORMS"] = "cpu"
+os.environ["JAX_PLATFORM_NAME"] = "cpu"
 from jax import random
 import jax.numpy as jnp
 
@@ -73,7 +76,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 numpyro.set_platform("cpu")
 #print(config)
-print('N_cpu=', jax.device_count())
+print('device=', jax.default_backend(), 'N=', jax.device_count())
 #assert platform in ["cpu", "gpu", "tpu"]
 
 
@@ -482,17 +485,17 @@ def loss(parameters, data, flux_orig, stellar_indx, pah_indx, cont_indx, ext_ind
 
     #lambd = 
     chi2 = jnp.sum(((Y-vmapped_mean_function(stellar_indx, pah_indx, cont_indx, ext_indx,  ExtType, scale_indx, Nuc_indx, ps, x_data) )/E)**2)
-    jax.debug.print(" chi2 = {x}", x=chi2)
-    jax.debug.print(" VarPen = {x}", x=jnp.sum(jnp.log((E)**2)))
-    jax.debug.print(" ch2+VarPen = {x}", x=chi2+jnp.sum(jnp.log((E)**2)))
+    # jax.debug.print(" chi2 = {x}", x=chi2)
+    # jax.debug.print(" VarPen = {x}", x=jnp.sum(jnp.log((E)**2)))
+    # jax.debug.print(" ch2+VarPen = {x}", x=chi2+jnp.sum(jnp.log((E)**2)))
 
-    jax.debug.print(" smooth = {x}", x=smoothness*lambd)
-    jax.debug.print(" dTau Prior = {x}", x=d_tau_prior*len(Y))
-    jax.debug.print(" ice frac Prior = {x}", x=ice_frac_prior*len(Y))
-    jax.debug.print(" PAHPrior = {x}", x=pah_prior*len(Y))
-    # jax.debug.print("")
-    #pah_prior = 0.0
-    jax.debug.print(" S Prior = {x}", x=s_prior*len(Y))
+    # jax.debug.print(" smooth = {x}", x=smoothness*lambd)
+    # jax.debug.print(" dTau Prior = {x}", x=d_tau_prior*len(Y))
+    # jax.debug.print(" ice frac Prior = {x}", x=ice_frac_prior*len(Y))
+    # jax.debug.print(" PAHPrior = {x}", x=pah_prior*len(Y))
+    # # jax.debug.print("")
+    # #pah_prior = 0.0
+    # jax.debug.print(" S Prior = {x}", x=s_prior*len(Y))
     # jax.debug.print(" PAH Prior = {x}", x=(10.0*jnp.tanh(10*(0.3 - PAH_5/PAH_62+1.0/10.0))-10.0))
     # jax.debug.print(" PAH 5/6.2 = {x}", x=PAH_5/PAH_62)
 
@@ -517,7 +520,7 @@ out1=jnp.empty(200)
 out2=[]
 out3=[] 
     
-def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Screen', Ices_6micron=False, InitialFit=False, BootStrap=False, N_bootstrap = 100,  HI_ratios = 'Case B', show_progress=True, N_MCMC = 5000, N_BurnIn = 15000, ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', RegStrength = 10000, Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, Disable_Ices = False, spec_res = 'h'):
+def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Screen', Ices_6micron=False, InitialFit=False, BootStrap=False, N_bootstrap = 100,  HI_ratios = 'Case B', show_progress=True, N_MCMC = 5000, N_BurnIn = 15000, ExtCurve = 'D23ExtCurve', EmCurve = 'D24Emissivity', MIR_CH = 'CHExt_v3', NIR_CH = 'CH_NIR', Fit_NIR_CH = False, NIR_Ice = 'NIR_Ice', NIR_CO2 = 'NIR_CO2', RegStrength = 10000, Cont_Only = False, St_Cont = True, Extend = False, Fit_CO = False, Disable_Ices = False, spec_res = 'h', init_values=None, save_pah_components=True, results_name=None):
     setup = SetupFit.Fit(objName, specdata, z, lam_range,  ExtType_, Ices_6micron, ExtCurve, MIR_CH = MIR_CH, NIR_CH = NIR_CH, Fit_NIR_CH = Fit_NIR_CH ,NIR_Ice_ = NIR_Ice, NIR_CO2_ = NIR_CO2, Cont_Only = Cont_Only, St_Cont = St_Cont, Extend = Extend, Fit_CO = Fit_CO, Disable_Ices = Disable_Ices, spec_res = spec_res)
     ObjName = objName
 
@@ -534,6 +537,23 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     parameters = setup.parameters
     data = setup.data
     ps = setup.ps
+    if init_values is not None:
+        init_values = np.asarray(init_values, dtype=float).ravel()
+        if init_values.size != len(ps):
+            raise ValueError(
+                f"init_values has length {init_values.size}, expected {len(ps)}"
+            )
+        fixed = np.asarray(setup.fixed, dtype=bool)
+        for i in range(len(ps)):
+            if fixed[i]:
+                continue
+            prior = setup.priors[i]
+            lo, hi = float(prior[0]), float(prior[1])
+            if lo > hi:
+                lo, hi = hi, lo
+            ps[i] = np.clip(init_values[i], lo, hi)
+        setup.parameters["Value"] = ps
+        setup.ps = ps
     stellar_indx = setup.stellar_indx
     pah_indx = setup.pah_indx
     cont_indx = setup.cont_indx
@@ -749,22 +769,10 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     elif(binNo== 2):
         fldr = 'Bootstrap'
 
-    resultsdir =dir_path+"/Results/"+ObjName+"/"+ExtTypeOut+"/"+fldr + "/"
-    if not os.path.exists(dir_path+"/Results/"):
-        os.mkdir(dir_path+"/Results/")
-    if not os.path.exists(dir_path+"/Results/"+ObjName+"/"):
-        os.mkdir(dir_path+"/Results/"+ObjName+"/")
-    if not os.path.exists(dir_path+"/Results/"+ObjName+"/"+ExtTypeOut+"/"):
-        os.mkdir(dir_path+"/Results/"+ObjName+"/"+ExtTypeOut+"/")   
-    if not os.path.exists(resultsdir):
-        os.mkdir(resultsdir)
-
-    if not os.path.exists(resultsdir+"/Plots/"):
-        os.mkdir(resultsdir+"/Plots/")
-    if not os.path.exists(resultsdir+"/Model Components/"):
-        os.mkdir(resultsdir+"/Model Components/")
-    if not os.path.exists(resultsdir+"/Ext. Corrections/"):
-        os.mkdir(resultsdir+"/Ext. Corrections/")
+    folder = ObjName if results_name is None else results_name
+    resultsdir = dir_path + "/Results/" + folder + "/" + ExtTypeOut + "/" + fldr + "/"
+    for sub in ("", "Plots/", "Model Components/", "Ext. Corrections/"):
+        os.makedirs(resultsdir + sub, exist_ok=True)
 
 
     setup.parameters.loc[setup.parameters['Fixed'] == False, 'Value'] = params
@@ -2548,8 +2556,12 @@ def RunFit(objName, specdata, z, lam_range, binNo, useMCMC=True, ExtType_='Scree
     print("")
     print("Line and PAH properties")
     Table.pprint_all(Table.from_pandas(output))
-    
-    
+
+    if not save_pah_components:
+        comp_path = resultsdir + "/Model Components/" + ObjName + "PAHs_components.txt"
+        if os.path.exists(comp_path):
+            os.remove(comp_path)
+
     return output
     
     
